@@ -1,22 +1,22 @@
 # PMFinder
 
-A guided journey app that gates your progress through the **scientific Product/Market Fit process** — sourcing, hypothesis, validation, metrics, surprise, decision — until you've genuinely earned each waypoint, then exports a Sequoia-style 2-pager memo.
+A guided journey app that walks you through the **scientific Product/Market Fit process** — sourcing, hypothesis, validation, metrics, surprise, decision — and exports a polished 2-pager investor memo at the end.
 
 *"When a great team meets a great market, something special happens."*
 
 ## What it does
 
-- **7 gated stages**, each with a structured form.
-- **Claude grades each stage** against an encoded rubric — unique (non-consensus) insight, technological inflection, desperate (not needing) customers, behavioral (not intent) metrics, savor the surprise, pivot the Who not the What.
+- **7 stages**, each with a structured form. Open from the start; passed stages are marked green.
+- **AI grades each stage** against an encoded rubric — unique (non-consensus) insight, technological inflection, desperate (not needing) customers, behavioral (not intent) metrics, savor the surprise, pivot the Who not the What.
 - **Per-stage evidence panel**: upload screenshots, paste transcripts. Images are passed to the grader so it can verify your claims.
 - **Coaching chat per stage**: Socratic helper that uses the same rubric, but doesn't grade — pressure-test your draft before submitting.
-- **Sequoia-style 2-pager memo** synthesized from all 7 stages, printable to PDF, shareable via public token link.
+- **2-pager investor memo** synthesized from all 7 stages, printable to PDF, shareable via public token link.
 
 ## Stack
 
 - Next.js 15 (App Router) · TypeScript · Tailwind CSS · Framer Motion
 - Supabase: Postgres + Auth (magic link) + Storage (private "evidence" bucket)
-- Anthropic SDK · `claude-sonnet-4-6` for grading/chat · `claude-opus-4-7` for memo synthesis
+- Anthropic SDK · fast model for stage grading + coaching chat · larger model for memo synthesis (see `lib/anthropic.ts`)
 - Memo export = print-styled HTML route (`@page` + `window.print()`) → PDF via browser
 
 ## Local setup
@@ -78,7 +78,7 @@ app/
   projects/[id]/                # Per-project routes
     page.tsx                    # Compass + journey map
     stage/[n]/page.tsx          # Stage form + evidence + chat
-    memo/                       # Printable Sequoia 2-pager
+    memo/                       # Printable 2-pager investor memo
   m/[token]/page.tsx            # Public read-only memo
   auth/                         # Magic-link callback + sign-out
   sign-in/                      # Sign-in page
@@ -87,7 +87,7 @@ components/                     # Compass, JourneyMap, StageForm, FeedbackPanel,
                                 # EvidencePanel, CoachingChat, MemoTemplate, ShareMemoDialog
 lib/
   rubrics/                      # 7 stage rubrics — the heart of the app
-  memo/                         # Sequoia template + synthesizer
+  memo/                         # 2-pager template + synthesizer
   supabase/                     # Server + browser clients
   anthropic.ts                  # Anthropic SDK + model selection
   grading.ts                    # Stage-grading logic

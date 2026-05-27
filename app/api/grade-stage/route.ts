@@ -115,20 +115,8 @@ async function handleAuthed(_request: Request, json: unknown) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  if (stageNumber > 1) {
-    const { data: priors } = await supabase
-      .from("stages")
-      .select("stage_number, status")
-      .eq("project_id", projectId)
-      .lt("stage_number", stageNumber);
-    const allPassed = (priors ?? []).filter((s) => s.status === "passed").length;
-    if (allPassed < stageNumber - 1) {
-      return NextResponse.json(
-        { error: "Earlier stages must pass before grading this one" },
-        { status: 409 }
-      );
-    }
-  }
+  // Note: stages are not gated — the user can submit any stage in any order.
+  // We still encourage the natural sequence via UI, but never block.
 
   const { data: existing } = await supabase
     .from("stages")

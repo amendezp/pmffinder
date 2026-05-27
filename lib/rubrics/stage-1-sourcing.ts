@@ -28,6 +28,9 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
       placeholder:
         "In one or two sentences: what do you believe that most people don't?",
       required: true,
+      minLength: 40,
+      example:
+        "LLMs make it economically viable to read every contract a mid-market company has ever signed — which means procurement can be run as continuous negotiation, not quarterly cycles. Most procurement leaders assume price discovery only happens at renewal, and that's the assumption I think is wrong.",
     },
     {
       key: "inflection_category",
@@ -69,6 +72,9 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
       kind: "long_text",
       rows: 4,
       required: true,
+      minLength: 40,
+      example:
+        "Frontier LLMs crossed the threshold where they can reliably extract structured terms from messy PDFs at ~$0.001/doc. Two years ago this required a human paralegal at ~$5/doc; now it's economically viable to do it continuously instead of once a quarter.",
     },
     {
       key: "authenticity",
@@ -78,6 +84,9 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
       kind: "long_text",
       rows: 4,
       required: true,
+      minLength: 40,
+      example:
+        "I led procurement at a 400-person SaaS company for 5 years and watched our team burn ~30 hours/quarter pulling pricing data from PDFs. I also spent 3 years on an NLP team that shipped contract-extraction models pre-LLMs, so I know which tasks just became cheap and which are still hard.",
     },
     {
       key: "prior_attempts",

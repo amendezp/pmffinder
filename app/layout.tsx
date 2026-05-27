@@ -19,9 +19,9 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PMFinder — Market Fit Radar",
+  title: "PMFinder — a guided journey to product/market fit",
   description:
-    "A guided journey that gates your progress until each stage of the PMF process is genuinely met, then exports a Sequoia-style 2-pager memo.",
+    "Walk through 7 stages of the PMF process. Each one graded by AI against a rubric. Export a 2-pager investor memo at the end.",
 };
 
 export default function RootLayout({

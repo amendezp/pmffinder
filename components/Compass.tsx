@@ -29,6 +29,7 @@ const CYAN = "#00f0ff";
 const CYAN_30 = "rgba(0,240,255,0.3)";
 const CYAN_15 = "rgba(0,240,255,0.15)";
 const PINK = "#ff0055";
+const GREEN = "#00ff88";
 const WHITE = "#ffffff";
 
 /**
@@ -324,8 +325,8 @@ export function Compass({
         {waypoints.map((w) => {
           const isActive = w.stage === activeStage;
           const isPassed = passedStages.has(w.stage);
-          const stroke = isActive ? CYAN : isPassed ? CYAN : CYAN_30;
-          const fill = isActive ? CYAN : isPassed ? CYAN : "#050814";
+          const stroke = isPassed ? GREEN : isActive ? CYAN : CYAN_30;
+          const fill = isPassed ? GREEN : isActive ? CYAN : "#050814";
 
           return (
             <g
@@ -370,7 +371,7 @@ export function Compass({
                   }
                   dominantBaseline="middle"
                   fontSize={Math.max(9, size * 0.022)}
-                  fill={isActive ? WHITE : isPassed ? CYAN : CYAN_30}
+                  fill={isPassed ? GREEN : isActive ? WHITE : CYAN_30}
                   fontFamily='"Space Mono", monospace'
                   style={{ letterSpacing: "0.1em" }}
                 >

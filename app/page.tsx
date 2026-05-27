@@ -11,13 +11,13 @@ const HOW_IT_WORKS = [
   },
   {
     n: "02",
-    title: "Claude grades each one",
-    body: "Each stage is checked against a rubric. The next stage stays locked until you genuinely meet the bar.",
+    title: "AI grades each one",
+    body: "Each stage is checked against a rubric. You see exactly which criteria you met and which you didn't.",
   },
   {
     n: "03",
     title: "Export your memo",
-    body: "Finish the journey and export a Sequoia-style 2-pager built from your seven stages.",
+    body: "Finish the journey and export a 2-pager investor memo built from your seven stages.",
   },
 ];
 
@@ -56,9 +56,9 @@ export default async function Landing() {
             product/market fit
           </h1>
           <p className="mt-6 max-w-lg font-mono text-base leading-relaxed text-white/75">
-            Seven stages. Claude grades each one against the rubric — until you
-            genuinely meet the bar. Finish, and export a Sequoia-style 2-pager
-            built from everything you wrote.
+            Seven stages. Each one graded against a rubric so you know exactly
+            where you stand. Finish, and export a 2-pager investor memo built
+            from everything you wrote.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">

@@ -20,7 +20,6 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
 
   const [mounted, setMounted] = useState(false);
   const [stageState, setStageState] = useState<GuestStageState | null>(null);
-  const [gateOk, setGateOk] = useState(true);
   const [allStages, setAllStages] = useState<
     Array<{ stage_number: number; status: "locked" | "in_progress" | "passed" }>
   >([]);
@@ -30,49 +29,23 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
     const state = readGuestState();
     setStageState(state.stages[stageNumber] ?? null);
 
-    // Build the stepper view from local state.
+    // Build the stepper view from local state. All stages are accessible —
+    // the only states that matter are "passed" vs "not passed".
     const sArr: Array<{ stage_number: number; status: "locked" | "in_progress" | "passed" }> = [];
     for (let i = 1; i <= 7; i++) {
       const s = state.stages[i];
-      const status: "locked" | "in_progress" | "passed" =
-        s?.status === "passed"
-          ? "passed"
-          : i === 1 || state.stages[i - 1]?.status === "passed"
-            ? "in_progress"
-            : "locked";
-      sArr.push({ stage_number: i, status });
+      sArr.push({
+        stage_number: i,
+        status: s?.status === "passed" ? "passed" : "in_progress",
+      });
     }
     setAllStages(sArr);
-
-    // Enforce client-side gating — all prior stages must be passed.
-    if (stageNumber > 1) {
-      for (let i = 1; i < stageNumber; i++) {
-        if (state.stages[i]?.status !== "passed") {
-          setGateOk(false);
-          return;
-        }
-      }
-    }
   }, [stageNumber]);
 
   if (!mounted) {
     return (
       <main className="mx-auto max-w-5xl px-6 py-10">
-        <p className="text-ink-700/70">Loading…</p>
-      </main>
-    );
-  }
-
-  if (!gateOk) {
-    return (
-      <main className="mx-auto max-w-2xl px-6 py-16 text-center">
-        <Link href="/try" className="text-xs text-ink-700/80 underline">
-          ← Back to journey
-        </Link>
-        <h1 className="mt-4 font-display text-3xl text-ink-900">Stage locked</h1>
-        <p className="mt-2 text-ink-700">
-          Pass the earlier stages first. Go back to the journey to see where you are.
-        </p>
+        <p className="font-mono text-sm text-white/70">Loading…</p>
       </main>
     );
   }

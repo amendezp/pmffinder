@@ -10,9 +10,9 @@ interface StageStepperProps {
 }
 
 /**
- * Always-visible horizontal progression bar. Seven dots connected by hairline
- * segments — passed = solid cyan, current = pulsing cyan ring, locked = dim.
- * Hover/focus on a passed or current node reveals the stage title.
+ * Always-visible horizontal progression bar. Every node is clickable — passed
+ * nodes are filled green, the current focus node has a pulsing cyan ring,
+ * everything else is a muted cyan outline.
  */
 export function StageStepper({
   stages,
@@ -22,16 +22,6 @@ export function StageStepper({
   const statusByStage = new Map<number, "locked" | "in_progress" | "passed">(
     stages.map((s) => [s.stage_number, s.status])
   );
-
-  // Default to fall-through: stage N defaults to locked unless the previous
-  // stage is passed (which would make N in_progress).
-  function statusFor(n: number) {
-    const explicit = statusByStage.get(n);
-    if (explicit) return explicit;
-    if (n === 1) return "in_progress";
-    const prev = statusByStage.get(n - 1);
-    return prev === "passed" ? "in_progress" : "locked";
-  }
 
   const passedCount = stages.filter((s) => s.status === "passed").length;
 
@@ -47,26 +37,24 @@ export function StageStepper({
       <ol className="flex w-full items-center">
         {Array.from({ length: 7 }).map((_, idx) => {
           const n = idx + 1;
-          const status = statusFor(n);
+          const status = statusByStage.get(n) ?? "locked";
           const rubric = rubrics[n as 1 | 2 | 3 | 4 | 5 | 6 | 7];
           const isCurrent = currentStage === n;
           const isPassed = status === "passed";
-          const isLocked = status === "locked";
 
           const dot = (
             <div
               className={[
                 "relative flex h-7 w-7 shrink-0 items-center justify-center border font-mono text-[10px] transition-all",
-                isLocked
-                  ? "border-neon-cyan/20 bg-deep-blue text-neon-cyan/40"
-                  : isPassed
-                    ? "border-neon-cyan bg-neon-cyan text-deep-blue shadow-cyber-glow"
-                    : isCurrent
-                      ? "border-neon-cyan bg-neon-cyan/15 text-white"
-                      : "border-neon-cyan/60 bg-deep-blue text-neon-cyan",
+                isPassed
+                  ? "border-neon-green bg-neon-green text-deep-blue shadow-cyber-green-glow"
+                  : isCurrent
+                    ? "border-neon-cyan bg-neon-cyan/15 text-white"
+                    : "border-neon-cyan/40 bg-deep-blue text-neon-cyan/70 hover:border-neon-cyan hover:text-white",
               ].join(" ")}
+              title={`Stage ${n}: ${rubric.title}`}
             >
-              {isCurrent && (
+              {isCurrent && !isPassed && (
                 <span className="absolute inset-[-4px] animate-pulse-fast border border-neon-cyan/50" />
               )}
               {isPassed ? "✓" : n}
@@ -74,7 +62,6 @@ export function StageStepper({
           );
 
           const href = hrefForStage ? hrefForStage(n) : null;
-          const canLink = href && !isLocked;
 
           return (
             <li
@@ -83,10 +70,9 @@ export function StageStepper({
                 "flex flex-1 items-center",
                 idx === 6 ? "flex-none" : "",
               ].join(" ")}
-              title={`Stage ${n}: ${rubric.title}`}
             >
-              {canLink ? (
-                <Link href={href!} className="group">
+              {href ? (
+                <Link href={href} className="group">
                   {dot}
                 </Link>
               ) : (
@@ -96,7 +82,7 @@ export function StageStepper({
                 <div
                   className={[
                     "h-px flex-1",
-                    isPassed ? "bg-neon-cyan/70" : "bg-neon-cyan/15",
+                    isPassed ? "bg-neon-green/60" : "bg-neon-cyan/15",
                   ].join(" ")}
                 />
               )}

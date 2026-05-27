@@ -79,7 +79,7 @@ export function GuestJourney() {
                 You're ready to export your memo.
               </h3>
               <p className="mb-3 mt-2 font-mono text-sm text-white/75">
-                Sign in to generate your Sequoia-style 2-pager. Your demo
+                Sign in to generate your 2-pager investor memo. Your demo
                 progress will be saved as a new project.
               </p>
               <Link

@@ -14,11 +14,13 @@ const config: Config = {
           bg: "#050814",
           fg: "#00f0ff",
           pink: "#ff0055",
+          green: "#00ff88",
           deep: "#0a0f24",
           panel: "#0c1530",
         },
         "neon-cyan": "#00f0ff",
         "neon-pink": "#ff0055",
+        "neon-green": "#00ff88",
         "deep-blue": "#050814",
 
         // Aliases (mapped to the cyber palette so existing components inherit
@@ -69,6 +71,7 @@ const config: Config = {
         compass: "0 0 12px rgba(0,240,255,0.45), 0 0 0 1px rgba(0,240,255,0.3)",
         "cyber-glow": "0 0 20px rgba(0,240,255,0.5)",
         "cyber-pink-glow": "0 0 20px rgba(255,0,85,0.5)",
+        "cyber-green-glow": "0 0 14px rgba(0,255,136,0.55)",
         "cyber-inner": "inset 0 0 30px rgba(0,240,255,0.1)",
       },
       dropShadow: {

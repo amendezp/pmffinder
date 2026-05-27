@@ -30,19 +30,8 @@ export default async function StagePage({
     .single();
   if (!project || project.user_id !== user.id) notFound();
 
-  // Enforce gating: all prior stages must be passed.
-  if (stageNumber > 1) {
-    const { data: priors } = await supabase
-      .from("stages")
-      .select("stage_number, status")
-      .eq("project_id", id)
-      .lt("stage_number", stageNumber);
-    const passed = (priors ?? []).filter((s) => s.status === "passed").length;
-    if (passed < stageNumber - 1) {
-      redirect(`/projects/${id}`);
-    }
-  }
-
+  // All seven stages are accessible at any time. The UI nudges users along
+  // the natural sequence but never blocks.
   const rubric = getRubric(stageNumber);
 
   const { data: stageRow } = await supabase

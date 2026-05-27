@@ -69,11 +69,24 @@ export async function gradeStage(args: {
   requireApiKey();
   const rubric = getRubric(args.stageNumber);
 
-  // Validate responses against the stage's Zod schema.
+  // Validate responses against the stage's Zod schema. Map Zod issues to a
+  // single readable sentence pointing at the offending fields.
   const parsed = rubric.schema.safeParse(args.responses);
   if (!parsed.success) {
+    const fieldByKey = new Map(rubric.fields.map((f) => [f.key, f]));
+    const issues = parsed.error.issues.map((iss) => {
+      const key = (iss.path[0] ?? "").toString();
+      const label = fieldByKey.get(key)?.label ?? key;
+      if (iss.code === "too_small") return `"${label}" needs a bit more detail`;
+      if (iss.code === "invalid_enum_value") return `"${label}" — please pick an option`;
+      if (iss.code === "invalid_type") return `"${label}" is required`;
+      return `"${label}" — ${iss.message}`;
+    });
+    const dedup = Array.from(new Set(issues));
     throw new Error(
-      `Invalid stage ${args.stageNumber} input: ${parsed.error.message}`
+      dedup.length === 1
+        ? `${dedup[0]} before submitting.`
+        : `A few things to fix before submitting: ${dedup.join("; ")}.`
     );
   }
 

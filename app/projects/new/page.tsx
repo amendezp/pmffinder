@@ -19,11 +19,15 @@ async function createProject(formData: FormData) {
     .single();
   if (error || !data) throw new Error(error?.message ?? "Failed to create project");
 
-  await supabase.from("stages").insert({
-    project_id: data.id,
-    stage_number: 1,
-    status: "in_progress",
-  });
+  // Seed all 7 stages as "in_progress" so every waypoint is reachable from
+  // the start. The UI marks them green once passed.
+  await supabase.from("stages").insert(
+    Array.from({ length: 7 }).map((_, i) => ({
+      project_id: data.id,
+      stage_number: i + 1,
+      status: "in_progress",
+    }))
+  );
 
   redirect(`/projects/${data.id}`);
 }

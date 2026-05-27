@@ -69,6 +69,10 @@ section {
   text-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
 }
 
+.text-glow-green {
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.55);
+}
+
 .text-glow-white {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
 }

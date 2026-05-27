@@ -60,7 +60,7 @@ export async function synthesizeMemo(args: SynthesizeArgs): Promise<MemoContent>
       {
         type: "text",
         text:
-          `You are writing a Sequoia-style 2-pager memo for a startup that has gone through a rigorous Product/Market Fit process. ` +
+          `You are writing a polished 2-pager investor memo for a startup that has gone through a rigorous Product/Market Fit process. The structure follows the canonical 2-pager format used by top venture firms. ` +
           `Tight, declarative, evidence-led prose. No hype, no buzzwords, no marketing-speak. Each section is short — this is a 2-pager. ` +
           `Concrete details from the founder's stage responses; quote customer language when it strengthens the case. Do not invent ` +
           `metrics, customers, or quotes that aren't in the source material. If a section has thin evidence, write it short and honest, ` +

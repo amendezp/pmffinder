@@ -17,9 +17,29 @@ interface StageFormProps {
     feedback: RubricResult
   ) => void;
   belowFormNotice?: React.ReactNode;
-  /** Builds a URL for the next stage; used by FeedbackPanel's continue CTA. */
   nextStageHref?: string;
   nextStageNumber?: number;
+}
+
+/**
+ * Validate a single field against its rubric definition. Returns an error
+ * message or null. Mirrors the server-side Zod checks so users never burn an
+ * API call on an incomplete submission.
+ */
+function validateField(field: StageField, value: string): string | null {
+  const v = (value ?? "").trim();
+  if (field.required && v.length === 0) return "Please fill this in.";
+  if (field.minLength && v.length < field.minLength) {
+    return `Aim for at least ${field.minLength} characters (you have ${v.length}).`;
+  }
+  if (
+    field.kind === "radio" &&
+    field.required &&
+    v.length === 0
+  ) {
+    return "Please pick one.";
+  }
+  return null;
 }
 
 function Field({
@@ -27,14 +47,18 @@ function Field({
   value,
   onChange,
   disabled,
+  error,
 }: {
   field: StageField;
   value: string;
   onChange: (v: string) => void;
   disabled?: boolean;
+  error?: string | null;
 }) {
-  const base =
-    "w-full border border-neon-cyan/25 bg-neon-cyan/5 px-3 py-2 font-mono text-sm text-white placeholder:text-neon-cyan/40 focus:border-neon-cyan focus:outline-none focus:ring-1 focus:ring-neon-cyan/40 transition-colors";
+  const baseBorder = error ? "border-neon-pink" : "border-neon-cyan/25";
+  const baseFocus = error ? "focus:border-neon-pink" : "focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan/40";
+  const base = `w-full border ${baseBorder} bg-neon-cyan/5 px-3 py-2 font-mono text-sm text-white placeholder:text-neon-cyan/40 ${baseFocus} focus:outline-none transition-colors`;
+
   return (
     <div className="space-y-2">
       <label className="block font-mono text-[10px] uppercase tracking-widest text-neon-cyan/80">
@@ -45,6 +69,16 @@ function Field({
         <p className="font-mono text-xs leading-snug text-white/65">
           {field.helper}
         </p>
+      )}
+      {field.example && (
+        <details className="font-mono text-xs text-neon-cyan/60">
+          <summary className="cursor-pointer select-none uppercase tracking-widest text-[10px] hover:text-neon-cyan">
+            Show example
+          </summary>
+          <p className="mt-1 border-l border-neon-cyan/30 pl-3 italic text-white/55">
+            {field.example}
+          </p>
+        </details>
       )}
       {field.kind === "long_text" && (
         <textarea
@@ -118,6 +152,12 @@ function Field({
           ))}
         </select>
       )}
+      {error && (
+        <p className="font-mono text-xs text-neon-pink">
+          <span className="mr-1">!</span>
+          {error}
+        </p>
+      )}
     </div>
   );
 }
@@ -144,16 +184,59 @@ export function StageForm({
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<RubricResult | null>(initialFeedback);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  // Only show errors after the user has tried to submit once.
+  const [showErrors, setShowErrors] = useState(false);
+
+  function validateAll(): Record<string, string> {
+    const errs: Record<string, string> = {};
+    for (const f of rubric.fields) {
+      const e = validateField(f, values[f.key] ?? "");
+      if (e) errs[f.key] = e;
+    }
+    return errs;
+  }
+
+  function setVal(key: string, v: string) {
+    setValues((prev) => ({ ...prev, [key]: v }));
+    if (showErrors) {
+      // Re-validate as the user types after a failed attempt.
+      const f = rubric.fields.find((x) => x.key === key);
+      if (f) {
+        const e = validateField(f, v);
+        setFieldErrors((prev) => {
+          const next = { ...prev };
+          if (e) next[key] = e;
+          else delete next[key];
+          return next;
+        });
+      }
+    }
+  }
 
   async function submit() {
-    setSubmitting(true);
     setError(null);
+    const errs = validateAll();
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      setShowErrors(true);
+      // Scroll the first error into view.
+      requestAnimationFrame(() => {
+        const firstKey = Object.keys(errs)[0];
+        const el = document.querySelector(
+          `[name="${firstKey}"], textarea[placeholder], input[placeholder]`
+        );
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+      return;
+    }
+
+    setSubmitting(true);
     try {
       const result = await onGrade(values);
       setFeedback(result);
       onSaveResponses?.(values, result);
       if (result.passed && typeof window !== "undefined") {
-        // Scroll the feedback (with the Continue CTA) into view.
         requestAnimationFrame(() => {
           window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
         });
@@ -165,6 +248,8 @@ export function StageForm({
     }
   }
 
+  const errorCount = Object.keys(fieldErrors).length;
+
   return (
     <div className="space-y-7">
       <div className="space-y-6">
@@ -173,8 +258,9 @@ export function StageForm({
             key={field.key}
             field={field}
             value={values[field.key] ?? ""}
-            onChange={(v) => setValues((prev) => ({ ...prev, [field.key]: v }))}
+            onChange={(v) => setVal(field.key, v)}
             disabled={alreadyPassed && !feedback}
+            error={showErrors ? fieldErrors[field.key] : undefined}
           />
         ))}
       </div>
@@ -194,6 +280,11 @@ export function StageForm({
               ? "Re-submit"
               : "Submit for grading"}
         </button>
+        {showErrors && errorCount > 0 && (
+          <span className="font-mono text-xs text-neon-pink">
+            {errorCount} field{errorCount === 1 ? "" : "s"} need{errorCount === 1 ? "s" : ""} attention above.
+          </span>
+        )}
         {error && (
           <span className="font-mono text-xs text-neon-pink">{error}</span>
         )}

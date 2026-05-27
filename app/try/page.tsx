@@ -30,9 +30,9 @@ export default function TryPage() {
             Seven stages to PMF
           </h1>
           <p className="mt-4 max-w-lg font-mono text-sm leading-relaxed text-white/75">
-            Walk through every stage right here. Claude grades each one against
-            the same rubric a signed-in user gets. You can sign in at any time
-            to save your progress and export your memo at the end.
+            Walk through every stage right here. Each one is graded against
+            the same rubric a signed-in user gets. Sign in at any time to save
+            your progress and export your memo at the end.
           </p>
         </div>
 

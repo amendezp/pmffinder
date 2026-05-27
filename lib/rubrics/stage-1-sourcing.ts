@@ -30,7 +30,7 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
       required: true,
       minLength: 40,
       example:
-        "LLMs make it economically viable to read every contract a mid-market company has ever signed — which means procurement can be run as continuous negotiation, not quarterly cycles. Most procurement leaders assume price discovery only happens at renewal, and that's the assumption I think is wrong.",
+        "Example (Airbnb, 2008): Online trust mechanics — verified profiles, two-way reviews, escrow payments — make ordinary travelers willing to pay to sleep in a stranger's spare room. Most people in 2008 believed only fringe couchsurfers would do this. We believe the entire mid-budget travel market will, once the trust loop closes.",
     },
     {
       key: "inflection_category",
@@ -74,7 +74,7 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
       required: true,
       minLength: 40,
       example:
-        "Frontier LLMs crossed the threshold where they can reliably extract structured terms from messy PDFs at ~$0.001/doc. Two years ago this required a human paralegal at ~$5/doc; now it's economically viable to do it continuously instead of once a quarter.",
+        "Example (Airbnb, 2008): By 2008 three threads converged — frictionless online payments, cheap digital photography + web hosting, and two-sided review systems (eBay, Yelp) had trained users to trust strangers via aggregated reputation. None of those individually was new; the bundle was.",
     },
     {
       key: "authenticity",
@@ -86,7 +86,7 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
       required: true,
       minLength: 40,
       example:
-        "I led procurement at a 400-person SaaS company for 5 years and watched our team burn ~30 hours/quarter pulling pricing data from PDFs. I also spent 3 years on an NLP team that shipped contract-extraction models pre-LLMs, so I know which tasks just became cheap and which are still hard.",
+        "Example (Airbnb): During an SF design conference we'd run out of money for rent. We blew up three air mattresses in our loft and rented them to attendees who couldn't get hotel rooms. We watched complete strangers wire us money, sleep on our floor, and write us glowing notes. We've lived this exact transaction — that's why we believe trust mechanics are the unlock, not the space.",
     },
     {
       key: "prior_attempts",

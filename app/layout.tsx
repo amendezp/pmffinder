@@ -1,23 +1,25 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Instrument_Serif, Space_Mono } from "next/font/google";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
+const instrument = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-cormorant",
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--font-instrument",
   display: "swap",
 });
 
-const inter = Inter({
+const spaceMono = Space_Mono({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-inter",
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-space-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "PMFinder — a compass toward product/market fit",
+  title: "PMFinder — Market Fit Radar",
   description:
     "A guided journey that gates your progress until each stage of the PMF process is genuinely met, then exports a Sequoia-style 2-pager memo.",
 };
@@ -28,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
+    <html lang="en" className={`${instrument.variable} ${spaceMono.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );

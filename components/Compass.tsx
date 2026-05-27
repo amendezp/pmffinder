@@ -17,7 +17,7 @@ interface CompassProps {
 
 const STAGE_LABELS = [
   "Sourcing",
-  "Value Hypothesis",
+  "Value Hyp.",
   "Concept",
   "Implementation",
   "MVP Metrics",
@@ -25,16 +25,15 @@ const STAGE_LABELS = [
   "Decision",
 ];
 
-const COLORS = {
-  line: "#E0E0E0",
-  light: "#95A5A6",
-  text: "#2C3E50",
-  accent: "#7F8C8D",
-};
+const CYAN = "#00f0ff";
+const CYAN_30 = "rgba(0,240,255,0.3)";
+const CYAN_15 = "rgba(0,240,255,0.15)";
+const PINK = "#ff0055";
+const WHITE = "#ffffff";
 
 /**
- * SVG-native rotating <g>. animateTransform is supported in every modern
- * browser and avoids the CSS transform-origin quirks of SMIL+SVG hybrids.
+ * SVG <g> rotating around (cx, cy) via animateTransform. Reliable across
+ * browsers and unaffected by CSS transform-origin quirks.
  */
 function SpinG({
   cx,
@@ -76,10 +75,11 @@ export function Compass({
 }: CompassProps) {
   const cx = size / 2;
   const cy = size / 2;
-  const ringR = size * 0.36;
-  const outerR = size * 0.46;
-  const farR = size * 0.48;
-  const waypointR = size * 0.018;
+  const innerR = size * 0.15;
+  const ringR = size * 0.28; // waypoint ring
+  const farR = size * 0.42;
+  const outerR = size * 0.48;
+  const waypointR = size * 0.014;
 
   const waypoints = STAGE_LABELS.map((label, i) => {
     const stage = i + 1;
@@ -96,132 +96,206 @@ export function Compass({
   });
 
   const needleAngle = ((activeStage - 1) / 7) * 360;
-  const needleLength = ringR - waypointR - size * 0.005;
+  const needleLength = ringR - waypointR * 2;
 
-  // Sweep beam — a thin wedge that rotates slowly around the dial.
-  const wedgeAngle = (Math.PI * 2) / 20; // ~18°
+  // Sweep beam wedge
+  const wedgeAngle = (Math.PI * 2) / 18;
   const wedgeTip = {
-    x: cx + outerR * Math.sin(wedgeAngle),
-    y: cy - outerR * Math.cos(wedgeAngle),
+    x: cx + farR * Math.sin(wedgeAngle),
+    y: cy - farR * Math.cos(wedgeAngle),
   };
-  const sweepPath = `M ${cx} ${cy} L ${cx} ${cy - outerR} A ${outerR} ${outerR} 0 0 1 ${wedgeTip.x} ${wedgeTip.y} Z`;
+  const sweepPath = `M ${cx} ${cy} L ${cx} ${cy - farR} A ${farR} ${farR} 0 0 1 ${wedgeTip.x} ${wedgeTip.y} Z`;
+
+  const bracketLen = size * 0.05;
+  const bracketInset = size * 0.04;
 
   return (
-    <div className="relative inline-block" style={{ width: size, height: size }}>
+    <div
+      className="relative inline-block svg-glow"
+      style={{ width: size, height: size }}
+    >
       <svg
         viewBox={`0 0 ${size} ${size}`}
         width={size}
         height={size}
         className="overflow-visible"
       >
-        {/* Outer hairline ring */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={farR}
-          stroke={COLORS.line}
-          strokeWidth={0.5}
-          fill="none"
-        />
+        <defs>
+          <radialGradient id="radar-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={CYAN} stopOpacity="0.18" />
+            <stop offset="50%" stopColor={CYAN} stopOpacity="0.05" />
+            <stop offset="100%" stopColor={CYAN} stopOpacity="0" />
+          </radialGradient>
+          <pattern
+            id="dot-grid"
+            x="0"
+            y="0"
+            width="20"
+            height="20"
+            patternUnits="userSpaceOnUse"
+          >
+            <circle cx="2" cy="2" r="0.8" fill={CYAN} opacity="0.25" />
+          </pattern>
+        </defs>
 
-        {/* Far dashed sweep — counter-rotates */}
-        <SpinG cx={cx} cy={cy} duration={25} reverse>
-          <circle
-            cx={cx}
-            cy={cy}
-            r={farR - 2}
-            stroke={COLORS.light}
-            strokeOpacity={0.55}
-            strokeWidth={0.5}
-            strokeDasharray="1 14"
-            fill="none"
-          />
-          {/* Two markers traveling on the far ring */}
-          <circle cx={cx} cy={cy - (farR - 2)} r={2} fill={COLORS.accent} />
-          <circle
-            cx={cx + (farR - 2) * Math.sin((Math.PI * 2 * 4.3) / 7)}
-            cy={cy - (farR - 2) * Math.cos((Math.PI * 2 * 4.3) / 7)}
-            r={1.5}
-            fill={COLORS.accent}
-          />
-        </SpinG>
+        {/* Radial glow */}
+        <circle cx={cx} cy={cy} r={outerR} fill="url(#radar-glow)" />
+        {/* Dot grid fill, gated to the outer ring */}
+        <circle cx={cx} cy={cy} r={outerR - 2} fill="url(#dot-grid)" opacity="0.5" />
 
-        {/* Crosshair */}
-        <g stroke={COLORS.line} strokeWidth={0.5}>
-          <line x1={cx} y1={cy - farR} x2={cx} y2={cy + farR} />
-          <line x1={cx - farR} y1={cy} x2={cx + farR} y2={cy} />
+        {/* Crosshair + diagonals */}
+        <g stroke={CYAN} strokeOpacity={0.28} strokeWidth={0.8}>
+          <line x1={cx} y1={cy - outerR} x2={cx} y2={cy + outerR} />
+          <line x1={cx - outerR} y1={cy} x2={cx + outerR} y2={cy} />
+          <line
+            x1={cx - outerR * 0.7}
+            y1={cy - outerR * 0.7}
+            x2={cx + outerR * 0.7}
+            y2={cy + outerR * 0.7}
+            strokeDasharray="3 6"
+          />
+          <line
+            x1={cx - outerR * 0.7}
+            y1={cy + outerR * 0.7}
+            x2={cx + outerR * 0.7}
+            y2={cy - outerR * 0.7}
+            strokeDasharray="3 6"
+          />
         </g>
 
-        {/* Inner ring (waypoint orbit) */}
+        {/* Concentric rings */}
         <circle
           cx={cx}
           cy={cy}
           r={ringR}
-          stroke={COLORS.line}
-          strokeWidth={0.5}
+          stroke={CYAN}
+          strokeOpacity={0.25}
+          strokeWidth={1}
           fill="none"
         />
-
-        {/* Sweep beam — slow rotation */}
-        <SpinG cx={cx} cy={cy} duration={28}>
-          <path d={sweepPath} fill={COLORS.light} fillOpacity={0.09} />
-        </SpinG>
-
-        {/* Dashed mid-ring rotates */}
-        <SpinG cx={cx} cy={cy} duration={18}>
-          <circle
-            cx={cx}
-            cy={cy}
-            r={outerR}
-            stroke={COLORS.light}
-            strokeOpacity={0.5}
-            strokeWidth={0.5}
-            strokeDasharray="2 16"
-            fill="none"
-          />
-        </SpinG>
-
-        {/* Tick marks every 30° */}
-        {Array.from({ length: 12 }).map((_, i) => {
-          const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
-          const inner = farR - 4;
-          const outer = farR + 4;
-          return (
-            <line
-              key={i}
-              x1={cx + Math.cos(a) * inner}
-              y1={cy + Math.sin(a) * inner}
-              x2={cx + Math.cos(a) * outer}
-              y2={cy + Math.sin(a) * outer}
-              stroke={COLORS.line}
-              strokeWidth={0.6}
-            />
-          );
-        })}
-
-        {/* Center marker */}
-        <circle cx={cx} cy={cy} r={2.5} fill={COLORS.text} />
         <circle
           cx={cx}
           cy={cy}
-          r={size * 0.03}
-          stroke={COLORS.line}
-          strokeWidth={0.5}
+          r={farR}
+          stroke={CYAN}
+          strokeOpacity={0.18}
+          strokeWidth={1}
           fill="none"
         />
-        <SpinG cx={cx} cy={cy} duration={12}>
+
+        {/* Sweep beam */}
+        <SpinG cx={cx} cy={cy} duration={28}>
+          <path d={sweepPath} fill={CYAN} opacity="0.08" />
+        </SpinG>
+
+        {/* Mid ring dashed rotation */}
+        <SpinG cx={cx} cy={cy} duration={22} reverse>
           <circle
             cx={cx}
             cy={cy}
-            r={size * 0.05}
-            stroke={COLORS.accent}
-            strokeWidth={0.5}
-            strokeDasharray="2 6"
+            r={farR}
+            stroke={CYAN}
+            strokeWidth={1}
+            strokeDasharray="2 12"
+            fill="none"
+          />
+          {/* Moving targets on the mid ring */}
+          <circle cx={cx} cy={cy - farR} r="5" fill={CYAN} />
+          <circle
+            cx={cx + farR * Math.sin((Math.PI * 2 * 3.4) / 7)}
+            cy={cy - farR * Math.cos((Math.PI * 2 * 3.4) / 7)}
+            r="3.5"
+            fill={PINK}
+          />
+        </SpinG>
+
+        {/* Outer dashed band */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r={outerR}
+          stroke={CYAN}
+          strokeOpacity={0.35}
+          strokeWidth={1}
+          strokeDasharray={`${size * 0.1} ${size * 0.02}`}
+          fill="none"
+        />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={outerR + 5}
+          stroke={CYAN}
+          strokeOpacity={0.1}
+          strokeWidth={size * 0.025}
+          fill="none"
+        />
+
+        {/* Inner partial arc rotating */}
+        <SpinG cx={cx} cy={cy} duration={8}>
+          <path
+            d={`M ${cx} ${cy - innerR} A ${innerR} ${innerR} 0 0 1 ${cx + innerR} ${cy}`}
+            stroke={CYAN}
+            strokeWidth={3}
+            fill="none"
+          />
+          <circle cx={cx + innerR} cy={cy} r="4" fill={WHITE} />
+        </SpinG>
+
+        {/* Inner ring boundary */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r={innerR}
+          stroke={CYAN}
+          strokeOpacity={0.25}
+          strokeWidth={1}
+          fill="none"
+        />
+
+        {/* Center */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r={size * 0.018}
+          fill={WHITE}
+        />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={size * 0.05}
+          stroke={CYAN}
+          strokeWidth={1.5}
+          fill="none"
+        />
+        <SpinG cx={cx} cy={cy} duration={10}>
+          <circle
+            cx={cx}
+            cy={cy}
+            r={size * 0.08}
+            stroke={CYAN}
+            strokeWidth={1}
+            strokeDasharray="5 5"
             fill="none"
           />
         </SpinG>
 
-        {/* Needle — framer-motion handles the spring on stage change */}
+        {/* Corner brackets */}
+        <g stroke={CYAN} strokeOpacity={0.55} strokeWidth={1.5} fill="none">
+          <path
+            d={`M ${bracketInset + bracketLen} ${bracketInset} L ${bracketInset} ${bracketInset} L ${bracketInset} ${bracketInset + bracketLen}`}
+          />
+          <path
+            d={`M ${size - bracketInset - bracketLen} ${bracketInset} L ${size - bracketInset} ${bracketInset} L ${size - bracketInset} ${bracketInset + bracketLen}`}
+          />
+          <path
+            d={`M ${bracketInset + bracketLen} ${size - bracketInset} L ${bracketInset} ${size - bracketInset} L ${bracketInset} ${size - bracketInset - bracketLen}`}
+          />
+          <path
+            d={`M ${size - bracketInset - bracketLen} ${size - bracketInset} L ${size - bracketInset} ${size - bracketInset} L ${size - bracketInset} ${size - bracketInset - bracketLen}`}
+          />
+        </g>
+
+        {/* Needle */}
         <motion.g
           initial={false}
           animate={{ rotate: needleAngle }}
@@ -233,15 +307,16 @@ export function Compass({
             y1={cy}
             x2={cx}
             y2={cy - needleLength}
-            stroke={COLORS.text}
-            strokeWidth={1}
+            stroke={WHITE}
+            strokeWidth={1.5}
             strokeLinecap="round"
+            opacity={0.9}
           />
           <circle
             cx={cx}
             cy={cy - needleLength}
             r={size * 0.012}
-            fill={COLORS.text}
+            fill={CYAN}
           />
         </motion.g>
 
@@ -249,6 +324,8 @@ export function Compass({
         {waypoints.map((w) => {
           const isActive = w.stage === activeStage;
           const isPassed = passedStages.has(w.stage);
+          const stroke = isActive ? CYAN : isPassed ? CYAN : CYAN_30;
+          const fill = isActive ? CYAN : isPassed ? CYAN : "#050814";
 
           return (
             <g
@@ -257,37 +334,28 @@ export function Compass({
               onClick={() => onStageClick?.(w.stage)}
             >
               {isActive && (
-                <>
-                  {/* Pulse halo via SMIL — works without framer's CSS handling */}
-                  <circle
-                    cx={w.x}
-                    cy={w.y}
-                    r={waypointR * 3.2}
-                    fill={COLORS.text}
-                    opacity={0.08}
-                  >
-                    <animate
-                      attributeName="r"
-                      values={`${waypointR * 2.4};${waypointR * 4};${waypointR * 2.4}`}
-                      dur="3.2s"
-                      repeatCount="indefinite"
-                    />
-                    <animate
-                      attributeName="opacity"
-                      values="0.12;0.04;0.12"
-                      dur="3.2s"
-                      repeatCount="indefinite"
-                    />
-                  </circle>
-                </>
+                <circle cx={w.x} cy={w.y} r={waypointR * 4} fill={CYAN} opacity={0.12}>
+                  <animate
+                    attributeName="r"
+                    values={`${waypointR * 2.5};${waypointR * 4.5};${waypointR * 2.5}`}
+                    dur="2s"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0.18;0.04;0.18"
+                    dur="2s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
               )}
               <circle
                 cx={w.x}
                 cy={w.y}
-                r={waypointR * (isActive ? 1.4 : 1)}
-                fill={isPassed || isActive ? COLORS.text : "#FFFFFF"}
-                stroke={isPassed || isActive ? COLORS.text : COLORS.light}
-                strokeWidth={0.8}
+                r={waypointR * (isActive ? 1.6 : 1.3)}
+                fill={fill}
+                stroke={stroke}
+                strokeWidth={1.2}
               />
               {!decorative && (
                 <text
@@ -302,16 +370,26 @@ export function Compass({
                   }
                   dominantBaseline="middle"
                   fontSize={Math.max(9, size * 0.022)}
-                  fill={isActive ? COLORS.text : COLORS.light}
-                  fontFamily='"Inter", sans-serif'
-                  style={{ letterSpacing: "0.15em" }}
+                  fill={isActive ? WHITE : isPassed ? CYAN : CYAN_30}
+                  fontFamily='"Space Mono", monospace'
+                  style={{ letterSpacing: "0.12em" }}
                 >
-                  {`0${w.stage}`.slice(-2)} · {w.label.toUpperCase()}
+                  {`TGT_${`0${w.stage}`.slice(-2)}`}{isActive ? ` // ${w.label.toUpperCase()}` : ""}
                 </text>
               )}
             </g>
           );
         })}
+
+        {/* Decorative outer ticks */}
+        <SpinG cx={cx} cy={cy} duration={45}>
+          <g stroke={CYAN} strokeOpacity={0.6} strokeWidth={1}>
+            <line x1={cx} y1={cy - outerR + 8} x2={cx} y2={cy - outerR - 2} />
+            <line x1={cx + outerR - 2} y1={cy} x2={cx + outerR + 8} y2={cy} />
+            <line x1={cx} y1={cy + outerR - 8} x2={cx} y2={cy + outerR + 2} />
+            <line x1={cx - outerR + 2} y1={cy} x2={cx - outerR - 8} y2={cy} />
+          </g>
+        </SpinG>
       </svg>
     </div>
   );

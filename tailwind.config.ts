@@ -9,77 +9,100 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Zen palette — minimal observatory feel.
-        zen: {
-          bg: "#F8F9FA",
-          text: "#2C3E50",
-          light: "#95A5A6",
-          line: "#E0E0E0",
-          accent: "#7F8C8D",
-          deep: "#1B2735",
+        // Cyber/radar palette
+        cyber: {
+          bg: "#050814",
+          fg: "#00f0ff",
+          pink: "#ff0055",
+          deep: "#0a0f24",
+          panel: "#0c1530",
         },
-        // Legacy aliases — remapped to the zen palette so older components
-        // pick up the new look without churn. Same hue family, monochrome.
+        "neon-cyan": "#00f0ff",
+        "neon-pink": "#ff0055",
+        "deep-blue": "#050814",
+
+        // Aliases (mapped to the cyber palette so existing components inherit
+        // the new look). The "zen-text" used to be dark; now it's white, etc.
+        zen: {
+          bg: "#050814",
+          text: "#ffffff",
+          light: "rgba(0,240,255,0.6)",
+          line: "rgba(0,240,255,0.2)",
+          accent: "#00f0ff",
+          deep: "#0a0f24",
+        },
         parchment: {
-          50: "#F8F9FA",
-          100: "#F1F3F5",
-          200: "#E8EAED",
-          300: "#D6DBDF",
-          400: "#B4BCC2",
-          500: "#95A5A6",
+          50: "#050814",
+          100: "#0a0f24",
+          200: "#14213a",
+          300: "rgba(0,240,255,0.4)",
+          400: "rgba(0,240,255,0.6)",
+          500: "#00f0ff",
         },
         ink: {
-          500: "#5D6D7E",
-          600: "#4A5C6E",
-          700: "#34495E",
-          800: "#2C3E50",
-          900: "#1B2735",
+          500: "rgba(0,240,255,0.5)",
+          600: "rgba(0,240,255,0.7)",
+          700: "rgba(0,240,255,0.85)",
+          800: "#00f0ff",
+          900: "#ffffff",
         },
         brass: {
-          400: "#B4BCC2",
-          500: "#95A5A6",
-          600: "#7F8C8D",
+          400: "rgba(0,240,255,0.6)",
+          500: "#00f0ff",
+          600: "#00f0ff",
         },
         compass: {
-          rose: "#2C3E50",
-          needle: "#2C3E50",
-          dial: "#E0E0E0",
+          rose: "#00f0ff",
+          needle: "#ffffff",
+          dial: "rgba(0,240,255,0.2)",
         },
       },
       fontFamily: {
-        serif: ['"Cormorant Garamond"', "ui-serif", "Georgia", "serif"],
-        sans: ['"Inter"', "ui-sans-serif", "system-ui", "-apple-system", "sans-serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        serif: ['"Instrument Serif"', "ui-serif", "Georgia", "serif"],
+        sans: ['"Space Mono"', "ui-monospace", "monospace"],
+        mono: ['"Space Mono"', "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       letterSpacing: {
         widest: "0.2em",
       },
       boxShadow: {
-        // Subtle flat shadow that fits the zen aesthetic. Re-used by older
-        // components that referenced shadow-compass.
-        compass: "0 1px 0 rgba(44,62,80,0.04), 0 4px 16px -8px rgba(44,62,80,0.10)",
+        compass: "0 0 12px rgba(0,240,255,0.45), 0 0 0 1px rgba(0,240,255,0.3)",
+        "cyber-glow": "0 0 20px rgba(0,240,255,0.5)",
+        "cyber-pink-glow": "0 0 20px rgba(255,0,85,0.5)",
+        "cyber-inner": "inset 0 0 30px rgba(0,240,255,0.1)",
+      },
+      dropShadow: {
+        glow: "0 0 8px rgba(0,240,255,0.6)",
+        "glow-pink": "0 0 8px rgba(255,0,85,0.6)",
       },
       keyframes: {
         scan: {
           "0%": { transform: "translateY(0%)" },
           "100%": { transform: "translateY(100%)" },
         },
-        "spin-slow": {
-          from: { transform: "rotate(0deg)" },
-          to: { transform: "rotate(360deg)" },
+        "scan-line": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(400%)" },
         },
         "fade-up": {
           "0%": { opacity: "0", transform: "translateY(8px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        flicker: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.55" },
+        },
       },
       animation: {
         scan: "scan 4s ease-in-out infinite alternate",
+        "scan-line": "scan-line 3s linear infinite",
+        "pulse-fast": "pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "spin-slow": "spin 30s linear infinite",
         "spin-medium": "spin 18s linear infinite",
         "spin-fast": "spin 12s linear infinite",
         "spin-reverse-slow": "spin 25s linear infinite reverse",
         "fade-up": "fade-up 0.6s ease-out both",
+        flicker: "flicker 4s ease-in-out infinite",
       },
     },
   },

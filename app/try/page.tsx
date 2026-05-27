@@ -3,39 +3,41 @@ import { GuestBanner } from "@/components/GuestBanner";
 import { GuestJourney } from "@/components/GuestJourney";
 
 export const metadata = {
-  title: "Try PMFinder — demo journey",
+  title: "PMFinder — demo scan",
 };
 
 export default function TryPage() {
   return (
-    <main className="relative min-h-screen w-full overflow-hidden">
-      <div className="absolute right-8 top-8 z-30 text-right text-[10px] uppercase tracking-widest text-zen-light no-print">
-        <div className="mb-1">System // Demo</div>
-        <Link href="/sign-in" className="text-zen-text hover:underline">
-          Sign in to save →
+    <main className="relative min-h-screen w-full overflow-hidden pb-16">
+      <div className="absolute right-8 top-8 z-30 text-right font-mono text-[10px] tracking-widest text-neon-cyan/70 no-print">
+        <div className="mb-1 flex items-center justify-end gap-3">
+          <span>MODE</span>
+          <span className="w-[60px] text-white">DEMO</span>
+        </div>
+        <Link href="/sign-in" className="text-neon-cyan hover:text-white">
+          Authenticate →
         </Link>
       </div>
 
-      <section className="relative z-10 mx-auto max-w-7xl px-8 py-12 md:px-16 md:pl-24">
-        <header className="mb-10 flex items-center gap-4 text-[10px] uppercase tracking-widest text-zen-light">
-          <Link href="/" className="hover:text-zen-text">
+      <section className="relative z-10 mx-auto max-w-7xl px-8 py-12 md:px-16">
+        <header className="mb-10 flex items-center gap-4 font-mono text-xs uppercase tracking-widest opacity-80">
+          <div className="h-2 w-2 animate-pulse bg-neon-cyan" />
+          <Link href="/" className="hover:text-neon-cyan">
             ← PMFinder
           </Link>
-          <div className="h-px w-8 bg-zen-line" />
-          <span>Demo // No Account</span>
+          <div className="hud-line-decorator h-px flex-1 opacity-50" />
         </header>
 
-        <div className="mb-8 max-w-2xl fade-in-up">
-          <h2 className="mb-3 text-[11px] uppercase tracking-widest text-zen-light">
-            Current Journey
-          </h2>
-          <h1 className="font-serif text-5xl font-light leading-tight tracking-wide text-zen-text md:text-6xl">
-            Your demo journey
+        <div className="relative mb-8 max-w-2xl fade-in-up">
+          <div className="absolute -left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-neon-cyan/0 via-neon-cyan to-neon-cyan/0" />
+          <h2 className="mb-2 font-mono text-sm text-white/70">Target Objective:</h2>
+          <h1 className="font-serif text-5xl italic leading-tight text-white text-glow-white md:text-6xl">
+            Demo scan
           </h1>
-          <p className="mt-4 max-w-lg text-base font-light leading-relaxed text-zen-accent">
-            Walk through all seven stages right here. Claude grades each one against
-            the same rubric a signed-in user gets. Sign in any time to save your
-            progress and export the memo at the end.
+          <p className="mt-4 max-w-lg font-mono text-sm leading-relaxed text-white/70">
+            Walk through all seven waypoints right here. Claude grades each
+            against the same rubric a signed-in user gets. Authenticate any time
+            to save your progress and export the memo at the end.
           </p>
         </div>
 

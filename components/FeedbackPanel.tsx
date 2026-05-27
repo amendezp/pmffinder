@@ -9,29 +9,34 @@ export function FeedbackPanel({ feedback }: { feedback: RubricResult }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       className={[
-        "rounded-lg border-2 p-5",
+        "border-l p-5 backdrop-blur-sm",
         feedback.passed
-          ? "border-brass-500/60 bg-parchment-100/80"
-          : "border-compass-rose/50 bg-parchment-50/90",
+          ? "border-neon-cyan bg-gradient-to-r from-neon-cyan/10 to-transparent"
+          : "border-neon-pink bg-gradient-to-r from-neon-pink/10 to-transparent",
       ].join(" ")}
     >
       <header className="mb-3 flex items-center justify-between">
-        <h3 className="font-serif text-xl text-ink-900">
-          {feedback.passed ? "Passed — onward" : "Not yet — revise and resubmit"}
+        <h3
+          className={[
+            "font-serif text-2xl italic",
+            feedback.passed ? "text-white text-glow" : "text-white text-glow-pink",
+          ].join(" ")}
+        >
+          {feedback.passed ? "Target locked." : "Signal not clear yet."}
         </h3>
         <span
           className={[
-            "rounded-full px-3 py-0.5 text-xs uppercase tracking-wider",
+            "border px-3 py-0.5 font-mono text-[10px] uppercase tracking-widest",
             feedback.passed
-              ? "bg-brass-500 text-parchment-50"
-              : "bg-compass-rose text-parchment-50",
+              ? "border-neon-cyan/40 bg-neon-cyan/10 text-neon-cyan"
+              : "border-neon-pink/40 bg-neon-pink/10 text-neon-pink",
           ].join(" ")}
         >
-          {feedback.passed ? "passed" : "in progress"}
+          {feedback.passed ? "PASSED" : "RETRY"}
         </span>
       </header>
 
-      <p className="mb-4 whitespace-pre-wrap text-sm text-ink-800">
+      <p className="mb-4 whitespace-pre-wrap font-mono text-sm text-white/85">
         {feedback.overall_feedback}
       </p>
 
@@ -40,34 +45,40 @@ export function FeedbackPanel({ feedback }: { feedback: RubricResult }) {
           <div
             key={c.id}
             className={[
-              "rounded-md border px-3 py-2",
+              "border-l px-3 py-2",
               c.met
-                ? "border-brass-500/40 bg-parchment-50/80"
-                : "border-compass-rose/40 bg-parchment-50/60",
+                ? "border-neon-cyan/40 bg-neon-cyan/5"
+                : "border-neon-pink/40 bg-neon-pink/5",
             ].join(" ")}
           >
             <div className="flex items-center gap-2">
               <span
                 className={[
-                  "inline-flex h-5 w-5 items-center justify-center rounded-full text-xs",
+                  "inline-flex h-4 w-4 items-center justify-center border font-mono text-[9px]",
                   c.met
-                    ? "bg-brass-500 text-parchment-50"
-                    : "bg-compass-rose text-parchment-50",
+                    ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan"
+                    : "border-neon-pink bg-neon-pink/20 text-neon-pink",
                 ].join(" ")}
               >
-                {c.met ? "✓" : "·"}
+                {c.met ? "✓" : "!"}
               </span>
-              <span className="font-serif text-base text-ink-900">{c.name}</span>
+              <span className="font-mono text-xs uppercase tracking-widest text-white">
+                {c.name}
+              </span>
             </div>
-            <p className="mt-1 whitespace-pre-wrap pl-7 text-sm text-ink-700">{c.feedback}</p>
+            <p className="mt-1 whitespace-pre-wrap pl-6 font-mono text-xs text-white/70">
+              {c.feedback}
+            </p>
           </div>
         ))}
       </div>
 
       {!feedback.passed && feedback.suggested_revisions.length > 0 && (
-        <div className="mt-4 border-t border-ink-700/15 pt-3">
-          <h4 className="mb-2 font-serif text-base text-ink-900">Suggested next steps</h4>
-          <ul className="ml-5 list-disc space-y-1 text-sm text-ink-700">
+        <div className="mt-4 border-t border-neon-cyan/15 pt-3">
+          <h4 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/80">
+            // Suggested course corrections
+          </h4>
+          <ul className="ml-5 list-disc space-y-1 font-mono text-xs text-white/80">
             {feedback.suggested_revisions.map((s, i) => (
               <li key={i}>{s}</li>
             ))}

@@ -11,23 +11,11 @@ interface StageFormProps {
   initialResponses?: Record<string, unknown>;
   initialFeedback?: RubricResult | null;
   alreadyPassed?: boolean;
-  /**
-   * Called when the user submits. Implementer is responsible for the API call
-   * and any persistence. Return the grading result so the form can render it.
-   */
   onGrade: (responses: Record<string, string>) => Promise<RubricResult>;
-  /**
-   * Optional callback fired after every grade — e.g., to save in-progress
-   * state to localStorage in guest mode.
-   */
   onSaveResponses?: (
     responses: Record<string, string>,
     feedback: RubricResult
   ) => void;
-  /**
-   * Optional banner rendered above the submit button (e.g., sign-in nudge in
-   * guest mode).
-   */
   belowFormNotice?: React.ReactNode;
 }
 
@@ -43,15 +31,17 @@ function Field({
   disabled?: boolean;
 }) {
   const base =
-    "w-full rounded-md border border-ink-700/25 bg-parchment-50/80 px-3 py-2 text-ink-900 focus:border-compass-rose focus:outline-none focus:ring-1 focus:ring-compass-rose/40";
+    "w-full border border-neon-cyan/25 bg-neon-cyan/5 px-3 py-2 font-mono text-sm text-white placeholder:text-neon-cyan/40 focus:border-neon-cyan focus:outline-none focus:ring-1 focus:ring-neon-cyan/40 transition-colors";
   return (
-    <div className="space-y-1.5">
-      <label className="block font-serif text-base text-ink-900">
+    <div className="space-y-2">
+      <label className="block font-mono text-[10px] uppercase tracking-widest text-neon-cyan/80">
         {field.label}
-        {field.required && <span className="text-compass-rose">*</span>}
+        {field.required && <span className="text-neon-pink"> *</span>}
       </label>
       {field.helper && (
-        <p className="text-sm leading-snug text-ink-700/85">{field.helper}</p>
+        <p className="font-mono text-xs leading-snug text-white/65">
+          {field.helper}
+        </p>
       )}
       {field.kind === "long_text" && (
         <textarea
@@ -74,27 +64,37 @@ function Field({
       )}
       {field.kind === "radio" && (
         <div className="space-y-2">
-          {field.options?.map((opt) => (
-            <label
-              key={opt.value}
-              className="flex cursor-pointer items-start gap-2 rounded-md border border-ink-700/15 bg-parchment-50/60 px-3 py-2 hover:bg-parchment-100/80"
-            >
-              <input
-                type="radio"
-                name={field.key}
-                value={opt.value}
-                checked={value === opt.value}
-                onChange={(e) => onChange(e.target.value)}
-                disabled={disabled}
-              />
-              <span className="text-sm text-ink-800">{opt.label}</span>
-            </label>
-          ))}
+          {field.options?.map((opt) => {
+            const selected = value === opt.value;
+            return (
+              <label
+                key={opt.value}
+                className={[
+                  "flex cursor-pointer items-start gap-3 border px-3 py-2 transition-colors",
+                  selected
+                    ? "border-neon-cyan bg-neon-cyan/10"
+                    : "border-neon-cyan/20 bg-neon-cyan/[0.03] hover:border-neon-cyan/60",
+                ].join(" ")}
+              >
+                <input
+                  type="radio"
+                  name={field.key}
+                  value={opt.value}
+                  checked={selected}
+                  onChange={(e) => onChange(e.target.value)}
+                  disabled={disabled}
+                  className="mt-0.5 accent-neon-cyan"
+                />
+                <span className="font-mono text-xs text-white">{opt.label}</span>
+              </label>
+            );
+          })}
           {(() => {
-            const selected = field.options?.find((o) => o.value === value);
-            return selected?.notice ? (
-              <p className="rounded-md border-l-2 border-compass-rose bg-parchment-100/80 px-3 py-2 text-sm text-ink-800">
-                {selected.notice}
+            const sel = field.options?.find((o) => o.value === value);
+            return sel?.notice ? (
+              <p className="border-l-2 border-neon-pink bg-neon-pink/5 px-3 py-2 font-mono text-xs text-white/85">
+                <span className="mr-2 text-neon-pink">!</span>
+                {sel.notice}
               </p>
             ) : null;
           })()}
@@ -155,8 +155,8 @@ export function StageForm({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-5">
+    <div className="space-y-7">
+      <div className="space-y-6">
         {rubric.fields.map((field) => (
           <Field
             key={field.key}
@@ -175,15 +175,17 @@ export function StageForm({
           type="button"
           onClick={submit}
           disabled={submitting}
-          className="rounded-md bg-compass-rose px-5 py-2.5 font-serif text-parchment-50 shadow-compass transition hover:bg-compass-rose/90 disabled:opacity-60"
+          className="border border-neon-cyan bg-neon-cyan/10 px-6 py-2.5 font-mono text-xs uppercase tracking-widest text-neon-cyan shadow-cyber-glow transition hover:bg-neon-cyan hover:text-deep-blue disabled:opacity-60"
         >
           {submitting
-            ? "Grading…"
+            ? "Transmitting…"
             : alreadyPassed
-              ? "Re-submit for grading"
-              : "Submit for grading"}
+              ? "Re-submit for analysis"
+              : "Submit for analysis"}
         </button>
-        {error && <span className="text-sm text-compass-rose">{error}</span>}
+        {error && (
+          <span className="font-mono text-xs text-neon-pink">{error}</span>
+        )}
       </div>
 
       {feedback && <FeedbackPanel feedback={feedback} />}

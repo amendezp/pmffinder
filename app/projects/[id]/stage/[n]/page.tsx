@@ -70,21 +70,26 @@ export default async function StagePage({
     (chatRow?.messages as Array<{ role: "user" | "assistant"; content: string }>) ?? [];
 
   return (
-    <main className="relative mx-auto max-w-5xl px-6 py-10 md:px-12">
-      <header className="mb-10">
-        <div className="mb-3 flex items-center gap-4 text-[10px] uppercase tracking-widest text-zen-light">
-          <Link href={`/projects/${id}`} className="hover:text-zen-text">
-            ← Back to journey
+    <main className="relative mx-auto min-h-screen max-w-5xl px-6 py-10 md:px-12">
+      <header className="relative mb-10">
+        <div className="mb-3 flex items-center gap-4 font-mono text-xs uppercase tracking-widest opacity-80">
+          <div className="h-2 w-2 animate-pulse bg-neon-cyan" />
+          <Link href={`/projects/${id}`} className="hover:text-neon-cyan">
+            ← Back to scan
           </Link>
-          <div className="h-px w-8 bg-zen-line" />
-          <span>
-            Stage {`0${stageNumber}`.slice(-2)} / 07
+          <div className="hud-line-decorator h-px flex-1 opacity-50" />
+          <span className="text-white/70">
+            TGT_{`0${stageNumber}`.slice(-2)} / 07
           </span>
         </div>
-        <h1 className="font-serif text-4xl font-light tracking-wide text-zen-text md:text-5xl">
-          {rubric.title}
-        </h1>
-        <p className="mt-2 max-w-2xl text-base font-light leading-relaxed text-zen-accent">
+        <div className="relative">
+          <div className="absolute -left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-neon-cyan/0 via-neon-cyan to-neon-cyan/0" />
+          <h2 className="mb-1 font-mono text-sm text-white/70">Waypoint:</h2>
+          <h1 className="font-serif text-4xl italic text-white text-glow-white md:text-5xl">
+            {rubric.title}
+          </h1>
+        </div>
+        <p className="mt-3 max-w-2xl font-mono text-sm leading-relaxed text-white/70">
           {rubric.blurb}
         </p>
       </header>

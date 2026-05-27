@@ -7,9 +7,13 @@ import { rubrics } from "@/lib/rubrics";
 interface JourneyMapProps {
   projectId: string;
   stages: Array<{ stage_number: number; status: "locked" | "in_progress" | "passed" }>;
+  /** Defaults to `/projects/{projectId}/stage/{n}`. */
+  hrefForStage?: (n: number) => string;
 }
 
-export function JourneyMap({ projectId, stages }: JourneyMapProps) {
+export function JourneyMap({ projectId, stages, hrefForStage }: JourneyMapProps) {
+  const buildHref =
+    hrefForStage ?? ((n: number) => `/projects/${projectId}/stage/${n}`);
   const statusByStage = new Map<number, string>(
     stages.map((s) => [s.stage_number, s.status])
   );
@@ -76,7 +80,7 @@ export function JourneyMap({ projectId, stages }: JourneyMapProps) {
             {isLocked ? (
               <div aria-disabled>{body}</div>
             ) : (
-              <Link href={`/projects/${projectId}/stage/${n}`}>{body}</Link>
+              <Link href={buildHref(n)}>{body}</Link>
             )}
           </li>
         );

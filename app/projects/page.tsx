@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { ImportGuestBanner } from "@/components/ImportGuestBanner";
 
 export default async function ProjectsPage() {
   const supabase = await createClient();
@@ -37,6 +38,8 @@ export default async function ProjectsPage() {
           </form>
         </div>
       </header>
+
+      <ImportGuestBanner />
 
       <ul className="space-y-3">
         {(projects ?? []).length === 0 && (

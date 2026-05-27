@@ -40,14 +40,28 @@ export default async function Landing() {
               <li>· Socratic coach to pressure-test your draft before submitting.</li>
               <li>· Shareable, printable memo when you cross the finish line.</li>
             </ul>
-            <div className="mt-8">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
-                href={user ? "/projects" : "/sign-in"}
+                href={user ? "/projects" : "/try"}
                 className="rounded-md bg-compass-rose px-6 py-3 font-serif text-parchment-50 shadow-compass transition hover:bg-compass-rose/90"
               >
-                {user ? "Open your projects" : "Sign in to begin"}
+                {user ? "Open your projects" : "Try the journey →"}
               </Link>
+              {!user && (
+                <Link
+                  href="/sign-in"
+                  className="rounded-md border border-ink-700/30 bg-parchment-50 px-6 py-3 font-serif text-ink-800 transition hover:bg-parchment-100"
+                >
+                  Sign in to save
+                </Link>
+              )}
             </div>
+            {!user && (
+              <p className="mt-3 text-xs text-ink-700/70">
+                No account required to demo. Sign in to save progress, upload evidence,
+                and export your memo.
+              </p>
+            )}
           </div>
 
           <div className="flex justify-center">

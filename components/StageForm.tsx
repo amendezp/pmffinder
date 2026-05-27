@@ -1,18 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 import type { StageField, RubricResult, StageRubric } from "@/lib/rubrics";
 import { FeedbackPanel } from "./FeedbackPanel";
 
 interface StageFormProps {
-  projectId: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rubric: StageRubric<any>;
   initialResponses?: Record<string, unknown>;
   initialFeedback?: RubricResult | null;
   alreadyPassed?: boolean;
+  /**
+   * Called when the user submits. Implementer is responsible for the API call
+   * and any persistence. Return the grading result so the form can render it.
+   */
+  onGrade: (responses: Record<string, string>) => Promise<RubricResult>;
+  /**
+   * Optional callback fired after every grade — e.g., to save in-progress
+   * state to localStorage in guest mode.
+   */
+  onSaveResponses?: (
+    responses: Record<string, string>,
+    feedback: RubricResult
+  ) => void;
+  /**
+   * Optional banner rendered above the submit button (e.g., sign-in nudge in
+   * guest mode).
+   */
+  belowFormNotice?: React.ReactNode;
 }
 
 function Field({
@@ -96,13 +112,14 @@ function Field({
 }
 
 export function StageForm({
-  projectId,
   rubric,
   initialResponses = {},
   initialFeedback = null,
   alreadyPassed = false,
+  onGrade,
+  onSaveResponses,
+  belowFormNotice,
 }: StageFormProps) {
-  const router = useRouter();
   const [values, setValues] = useState<Record<string, string>>(() => {
     const base: Record<string, string> = {};
     for (const f of rubric.fields) {
@@ -119,27 +136,11 @@ export function StageForm({
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch("/api/grade-stage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          projectId,
-          stageNumber: rubric.stageNumber,
-          responses: values,
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json.error || "Failed to grade.");
-        return;
-      }
-      setFeedback(json.result as RubricResult);
-      if (json.result?.passed) {
-        // Refresh server-rendered project data so JourneyMap reflects the new state.
-        router.refresh();
-      }
+      const result = await onGrade(values);
+      setFeedback(result);
+      onSaveResponses?.(values, result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Network error");
+      setError(err instanceof Error ? err.message : "Failed to grade.");
     } finally {
       setSubmitting(false);
     }
@@ -158,6 +159,8 @@ export function StageForm({
           />
         ))}
       </div>
+
+      {belowFormNotice}
 
       <div className="flex flex-wrap items-center gap-3">
         <button

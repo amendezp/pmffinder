@@ -2,32 +2,73 @@ import { z } from "zod";
 import { anthropic, MODELS, requireApiKey } from "@/lib/anthropic";
 import { createClient } from "@/lib/supabase/server";
 import { getRubric } from "@/lib/rubrics";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
-const bodySchema = z.object({
+const authedBodySchema = z.object({
   projectId: z.string().uuid(),
   stageNumber: z.number().int().min(1).max(7),
   message: z.string().min(1).max(10_000),
 });
 
+const guestBodySchema = z.object({
+  stageNumber: z.number().int().min(1).max(7),
+  message: z.string().min(1).max(10_000),
+  /** Full conversation history kept client-side. */
+  history: z
+    .array(
+      z.object({
+        role: z.enum(["user", "assistant"]),
+        content: z.string(),
+      })
+    )
+    .max(50)
+    .default([]),
+});
+
 type StoredMessage = { role: "user" | "assistant"; content: string; ts: string };
 
 export async function POST(request: Request) {
+  const json = await request.json().catch(() => null);
+
+  if (json && typeof json === "object" && !("projectId" in json)) {
+    return handleGuest(request, json);
+  }
+
+  return handleAuthed(request, json);
+}
+
+async function handleGuest(request: Request, json: unknown) {
+  const parsed = guestBodySchema.safeParse(json);
+  if (!parsed.success) return new Response("Invalid request", { status: 400 });
+
+  const ip = getClientIp(request);
+  const limit = checkRateLimit({
+    key: `chat:${ip}`,
+    max: 60,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!limit.allowed) {
+    return new Response(
+      "Hit the demo's hourly chat limit. Sign in to keep going.",
+      { status: 429 }
+    );
+  }
+
+  const { stageNumber, message, history } = parsed.data;
+  return streamChat(stageNumber, [...history, { role: "user", content: message }]);
+}
+
+async function handleAuthed(_request: Request, json: unknown) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) {
-    return new Response("Not authenticated", { status: 401 });
-  }
+  if (!user) return new Response("Not authenticated", { status: 401 });
 
-  const json = await request.json().catch(() => null);
-  const parsed = bodySchema.safeParse(json);
-  if (!parsed.success) {
-    return new Response("Invalid request", { status: 400 });
-  }
+  const parsed = authedBodySchema.safeParse(json);
+  if (!parsed.success) return new Response("Invalid request", { status: 400 });
   const { projectId, stageNumber, message } = parsed.data;
 
-  // Verify ownership.
   const { data: project } = await supabase
     .from("projects")
     .select("id, user_id")
@@ -37,17 +78,13 @@ export async function POST(request: Request) {
     return new Response("Forbidden", { status: 403 });
   }
 
-  // Load conversation history.
   const { data: chatRow } = await supabase
     .from("stage_chats")
     .select("messages")
     .eq("project_id", projectId)
     .eq("stage_number", stageNumber)
     .maybeSingle();
-
   const history: StoredMessage[] = (chatRow?.messages as StoredMessage[]) ?? [];
-
-  // Append the new user message.
   const userMsg: StoredMessage = {
     role: "user",
     content: message,
@@ -55,9 +92,37 @@ export async function POST(request: Request) {
   };
   const updatedHistory = [...history, userMsg];
 
+  return streamChat(
+    stageNumber,
+    updatedHistory.map((m) => ({ role: m.role, content: m.content })),
+    async (assistantText: string) => {
+      const finalHistory = [
+        ...updatedHistory,
+        {
+          role: "assistant" as const,
+          content: assistantText,
+          ts: new Date().toISOString(),
+        },
+      ];
+      await supabase.from("stage_chats").upsert(
+        {
+          project_id: projectId,
+          stage_number: stageNumber,
+          messages: finalHistory,
+        },
+        { onConflict: "project_id,stage_number" }
+      );
+    }
+  );
+}
+
+function streamChat(
+  stageNumber: number,
+  messages: Array<{ role: "user" | "assistant"; content: string }>,
+  onComplete?: (assistantText: string) => Promise<void>
+) {
   requireApiKey();
   const rubric = getRubric(stageNumber);
-
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream<Uint8Array>({
@@ -84,10 +149,7 @@ export async function POST(request: Request) {
               cache_control: { type: "ephemeral" },
             },
           ],
-          messages: updatedHistory.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
+          messages,
         });
 
         for await (const event of apiStream) {
@@ -100,23 +162,7 @@ export async function POST(request: Request) {
           }
         }
 
-        // Persist after the stream completes.
-        const finalHistory = [
-          ...updatedHistory,
-          {
-            role: "assistant" as const,
-            content: assistantText,
-            ts: new Date().toISOString(),
-          },
-        ];
-        await supabase.from("stage_chats").upsert(
-          {
-            project_id: projectId,
-            stage_number: stageNumber,
-            messages: finalHistory,
-          },
-          { onConflict: "project_id,stage_number" }
-        );
+        if (onComplete) await onComplete(assistantText);
       } catch (err) {
         const msg = err instanceof Error ? err.message : "stream error";
         controller.enqueue(encoder.encode(`\n\n[error: ${msg}]`));

@@ -2,18 +2,90 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { gradeStage } from "@/lib/grading";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import type { RubricResult } from "@/lib/rubrics";
 
-const bodySchema = z.object({
+const authedBodySchema = z.object({
   projectId: z.string().uuid(),
   stageNumber: z.number().int().min(1).max(7),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   responses: z.any(),
 });
 
+const guestBodySchema = z.object({
+  stageNumber: z.number().int().min(1).max(7),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  responses: z.any(),
+  /** Last feedback (kept by client) so the grader can see iteration context. */
+  priorFeedback: z
+    .object({
+      passed: z.boolean(),
+      criteria: z.array(z.any()),
+      overall_feedback: z.string(),
+      suggested_revisions: z.array(z.string()),
+    })
+    .optional(),
+});
+
 const IMAGE_MIME = new Set(["image/png", "image/jpeg", "image/gif", "image/webp"]);
 
 export async function POST(request: Request) {
+  const json = await request.json().catch(() => null);
+
+  // Branch: guest mode (no projectId) vs authed (with projectId).
+  if (json && typeof json === "object" && !("projectId" in json)) {
+    return handleGuest(request, json);
+  }
+
+  return handleAuthed(request, json);
+}
+
+async function handleGuest(request: Request, json: unknown) {
+  const parsed = guestBodySchema.safeParse(json);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid request", issues: parsed.error.format() },
+      { status: 400 }
+    );
+  }
+
+  // Rate-limit guests to keep API costs sane. Per-IP, sliding hour.
+  const ip = getClientIp(request);
+  const limit = checkRateLimit({
+    key: `grade:${ip}`,
+    max: 25,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!limit.allowed) {
+    return NextResponse.json(
+      {
+        error:
+          "You've hit the demo's hourly limit. Sign in to keep going — signed-in usage isn't capped.",
+      },
+      { status: 429 }
+    );
+  }
+
+  const { stageNumber, responses, priorFeedback } = parsed.data;
+
+  let result: RubricResult;
+  try {
+    result = await gradeStage({
+      stageNumber,
+      responses,
+      priorFeedback,
+      // No evidence in guest mode (no Supabase Storage available).
+      evidence: [],
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Grading failed";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+
+  return NextResponse.json({ result, guest: true });
+}
+
+async function handleAuthed(_request: Request, json: unknown) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -22,8 +94,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const json = await request.json().catch(() => null);
-  const parsed = bodySchema.safeParse(json);
+  const parsed = authedBodySchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Invalid request", issues: parsed.error.format() },
@@ -32,7 +103,6 @@ export async function POST(request: Request) {
   }
   const { projectId, stageNumber, responses } = parsed.data;
 
-  // Verify the user owns the project. RLS would block anyway, but be explicit.
   const { data: project, error: projectError } = await supabase
     .from("projects")
     .select("id, user_id")
@@ -45,7 +115,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Server-side gating: all prior stages must be passed before this one can be graded.
   if (stageNumber > 1) {
     const { data: priors } = await supabase
       .from("stages")
@@ -61,7 +130,6 @@ export async function POST(request: Request) {
     }
   }
 
-  // Fetch existing stage row (for prior feedback context).
   const { data: existing } = await supabase
     .from("stages")
     .select("last_feedback, attempts")
@@ -71,8 +139,6 @@ export async function POST(request: Request) {
 
   const priorFeedback = (existing?.last_feedback as RubricResult | null) ?? undefined;
 
-  // Fetch evidence for this stage. Image attachments are fetched as base64 for
-  // inclusion in the Claude message.
   const { data: evidenceRows } = await supabase
     .from("evidence")
     .select("id, kind, caption, tag, body, storage_path")
@@ -105,7 +171,6 @@ export async function POST(request: Request) {
           body: e.body,
         };
       }
-      // PDFs/audio: skip for now; could be transcribed/extracted later.
       return null;
     })
   );
@@ -123,7 +188,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 
-  // Persist stage state. Upsert so it works whether the row exists or not.
   const status = result.passed ? "passed" : "in_progress";
   const { error: upsertError } = await supabase.from("stages").upsert(
     {
@@ -141,7 +205,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: upsertError.message }, { status: 500 });
   }
 
-  // If passed, unlock the next stage (create an in_progress row if absent).
   if (result.passed && stageNumber < 7) {
     const next = stageNumber + 1;
     const { data: nextStage } = await supabase

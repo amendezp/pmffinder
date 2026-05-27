@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { StageRubric } from "./types";
 
-export const stage6Schema = z.object({
+export const stage8Schema = z.object({
   surprise: z.string().min(80),
   inflection_in_data: z.string().min(60),
   doubling_down_plan: z.string().min(80),
@@ -9,14 +9,14 @@ export const stage6Schema = z.object({
   iteration_on_what: z.string().optional().default(""),
 });
 
-export type Stage6Input = z.infer<typeof stage6Schema>;
+export type Stage8Input = z.infer<typeof stage8Schema>;
 
-export const stage6Rubric: StageRubric<Stage6Input> = {
-  stageNumber: 6,
+export const stage8Rubric: StageRubric<Stage8Input> = {
+  stageNumber: 8,
   title: "Savor the Surprise",
   blurb:
     "Where's the inflection in your data? Double down on what works. Fixing the bad offers no leverage.",
-  schema: stage6Schema,
+  schema: stage8Schema,
   fields: [
     {
       key: "surprise",
@@ -83,7 +83,7 @@ export const stage6Rubric: StageRubric<Stage6Input> = {
         "The plan focuses on amplifying what works. The user has explicitly named what bad/weak signal they will NOT spend time fixing.",
     },
   ],
-  systemPrompt: `You are the grader for Stage 6 (Savor the Surprise) — a core PMF principle: look for the unexpected positive signal and pour fuel on it rather than fixing the bad.
+  systemPrompt: `You are the grader for Stage 8 (Savor the Surprise) — a core PMF principle: look for the unexpected positive signal and pour fuel on it rather than fixing the bad.
 
 Standards:
 - A REAL SURPRISE must be named. If the user says "things went as planned" or describes only what they expected, fail real_surprise — that means they aren't paying close enough attention to the data, OR they don't actually have data yet (in which case they should be back in Stage 5).
@@ -93,7 +93,7 @@ Standards:
 
 You MUST call submit_rubric_result. Strict pass.`,
   formatUserMessage(input, ctx) {
-    let body = `# Stage 6 submission — Savor the Surprise
+    let body = `# Stage 8 submission — Savor the Surprise
 
 ## The surprise
 ${input.surprise}

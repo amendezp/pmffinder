@@ -98,7 +98,7 @@ export function FeedbackPanel({
         </div>
       )}
 
-      {feedback.passed && nextStageHref && nextStageNumber && nextStageNumber <= 7 && (
+      {feedback.passed && nextStageHref && nextStageNumber && nextStageNumber <= 9 && (
         <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-neon-cyan/15 pt-4">
           <Link
             href={nextStageHref}
@@ -107,16 +107,16 @@ export function FeedbackPanel({
             Continue to stage {nextStageNumber} →
           </Link>
           <span className="font-mono text-[10px] uppercase tracking-widest text-neon-cyan/60">
-            {nextStageNumber === 8
+            {nextStageNumber === 10
               ? "You're done — generate your memo"
-              : `${7 - nextStageNumber + 1} stages to go`}
+              : `${9 - nextStageNumber + 1} stages to go`}
           </span>
         </div>
       )}
 
-      {feedback.passed && (!nextStageHref || (nextStageNumber ?? 8) > 7) && (
+      {feedback.passed && (!nextStageHref || (nextStageNumber ?? 10) > 9) && (
         <div className="mt-5 border-t border-neon-cyan/15 pt-4 font-mono text-xs text-neon-cyan">
-          All seven stages passed. Time to generate your memo.
+          All nine stages passed. Time to generate your memo.
         </div>
       )}
     </motion.section>

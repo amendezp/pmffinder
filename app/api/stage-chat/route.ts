@@ -6,12 +6,12 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const authedBodySchema = z.object({
   projectId: z.string().uuid(),
-  stageNumber: z.number().int().min(1).max(7),
+  stageNumber: z.number().int().min(1).max(9),
   message: z.string().min(1).max(10_000),
 });
 
 const guestBodySchema = z.object({
-  stageNumber: z.number().int().min(1).max(7),
+  stageNumber: z.number().int().min(1).max(9),
   message: z.string().min(1).max(10_000),
   /** Full conversation history kept client-side. */
   history: z

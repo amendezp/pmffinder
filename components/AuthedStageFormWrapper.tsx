@@ -42,7 +42,7 @@ export function AuthedStageFormWrapper({
 
   const nextN = rubric.stageNumber + 1;
   const nextHref =
-    nextN <= 7
+    nextN <= 9
       ? `/projects/${projectId}/stage/${nextN}`
       : `/projects/${projectId}/memo`;
 
@@ -54,7 +54,7 @@ export function AuthedStageFormWrapper({
       alreadyPassed={alreadyPassed}
       onGrade={onGrade}
       nextStageHref={nextHref}
-      nextStageNumber={nextN <= 7 ? nextN : 8}
+      nextStageNumber={nextN <= 9 ? nextN : 10}
     />
   );
 }

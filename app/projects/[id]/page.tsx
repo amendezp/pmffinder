@@ -35,18 +35,18 @@ export default async function ProjectPage({
 
   let active = 1;
   const statusMap = new Map(stages.map((s) => [s.stage_number, s.status]));
-  for (let i = 1; i <= 7; i++) {
+  for (let i = 1; i <= 9; i++) {
     const st = statusMap.get(i);
     if (st !== "passed") {
       active = i;
       break;
     }
-    if (i === 7 && st === "passed") active = 7;
+    if (i === 9 && st === "passed") active = 9;
   }
   const passedStages = new Set(
     stages.filter((s) => s.status === "passed").map((s) => s.stage_number)
   );
-  const allPassed = passedStages.size === 7;
+  const allPassed = passedStages.size === 9;
 
   const { data: memo } = await supabase
     .from("memos")
@@ -101,7 +101,7 @@ export default async function ProjectPage({
         <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,500px)]">
           <section className="fade-in-up" style={{ animationDelay: "0.05s" }}>
             <h2 className="mb-6 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/70">
-              <span>The 7 stages</span>
+              <span>The 9 stages</span>
               <div className="h-px flex-1 bg-neon-cyan/20" />
             </h2>
             <JourneyMap projectId={project.id} stages={stages} />

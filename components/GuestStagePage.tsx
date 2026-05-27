@@ -32,7 +32,7 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
     // Build the stepper view from local state. All stages are accessible —
     // the only states that matter are "passed" vs "not passed".
     const sArr: Array<{ stage_number: number; status: "locked" | "in_progress" | "passed" }> = [];
-    for (let i = 1; i <= 7; i++) {
+    for (let i = 1; i <= 9; i++) {
       const s = state.stages[i];
       sArr.push({
         stage_number: i,
@@ -84,7 +84,7 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
   }
 
   const nextN = stageNumber + 1;
-  const nextHref = nextN <= 7 ? `/try/stage/${nextN}` : "/try";
+  const nextHref = nextN <= 9 ? `/try/stage/${nextN}` : "/try";
 
   return (
     <main className="relative mx-auto min-h-screen max-w-5xl px-6 py-10 md:px-12">
@@ -99,7 +99,7 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
         <div className="relative">
           <div className="absolute -left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-neon-cyan/0 via-neon-cyan to-neon-cyan/0" />
           <h2 className="mb-1 font-mono text-sm uppercase tracking-widest text-neon-cyan/70">
-            Stage {stageNumber} of 7 · Demo
+            Stage {stageNumber} of 9 · Demo
           </h2>
           <h1 className="font-serif text-4xl italic text-white text-glow-white md:text-5xl">
             {rubric.title}
@@ -134,7 +134,7 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
             onGrade={onGrade}
             onSaveResponses={onSaveResponses}
             nextStageHref={nextHref}
-            nextStageNumber={nextN <= 7 ? nextN : 8}
+            nextStageNumber={nextN <= 9 ? nextN : 10}
           />
         </section>
 

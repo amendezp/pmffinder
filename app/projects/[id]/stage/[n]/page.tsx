@@ -15,7 +15,7 @@ export default async function StagePage({
 }) {
   const { id, n } = await params;
   const stageNumber = Number(n);
-  if (!Number.isInteger(stageNumber) || stageNumber < 1 || stageNumber > 7) notFound();
+  if (!Number.isInteger(stageNumber) || stageNumber < 1 || stageNumber > 9) notFound();
 
   const supabase = await createClient();
   const {
@@ -82,7 +82,7 @@ export default async function StagePage({
         <div className="relative">
           <div className="absolute -left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-neon-cyan/0 via-neon-cyan to-neon-cyan/0" />
           <h2 className="mb-1 font-mono text-sm uppercase tracking-widest text-neon-cyan/70">
-            Stage {stageNumber} of 7
+            Stage {stageNumber} of 9
           </h2>
           <h1 className="font-serif text-4xl italic text-white text-glow-white md:text-5xl">
             {rubric.title}

@@ -26,22 +26,22 @@ export function JourneyMap({ projectId, stages, hrefForStage }: JourneyMapProps)
 
   // The "current" stage = first non-passed; everything else is open.
   let current = 1;
-  for (let i = 1; i <= 7; i++) {
+  for (let i = 1; i <= 9; i++) {
     if (statusByStage.get(i) !== "passed") {
       current = i;
       break;
     }
-    if (i === 7) current = 7;
+    if (i === 9) current = 9;
   }
 
   return (
     <ol className="flex flex-col gap-3">
-      {Array.from({ length: 7 }).map((_, idx) => {
+      {Array.from({ length: 9 }).map((_, idx) => {
         const n = idx + 1;
         const status =
           (statusByStage.get(n) as "locked" | "in_progress" | "passed" | undefined) ??
           "locked"; // "locked" here just means "not started yet"
-        const rubric = rubrics[n as 1 | 2 | 3 | 4 | 5 | 6 | 7];
+        const rubric = rubrics[n as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9];
         const isPassed = status === "passed";
         const isCurrent = n === current && !isPassed;
 

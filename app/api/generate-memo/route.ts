@@ -40,16 +40,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Gating: memo requires Stage 7 passed.
-  const { data: stage7 } = await supabase
+  // Gating: memo requires Stage 9 (Decision Tree) passed.
+  const { data: finalStage } = await supabase
     .from("stages")
     .select("status, responses")
     .eq("project_id", projectId)
-    .eq("stage_number", 7)
+    .eq("stage_number", 9)
     .maybeSingle();
-  if (!stage7 || stage7.status !== "passed") {
+  if (!finalStage || finalStage.status !== "passed") {
     return NextResponse.json(
-      { error: "Stage 7 must be passed before generating a memo" },
+      { error: "Stage 9 (Decision Tree) must be passed before generating a memo" },
       { status: 409 }
     );
   }

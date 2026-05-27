@@ -17,7 +17,9 @@ interface CompassProps {
 
 const STAGE_LABELS = [
   "Sourcing",
-  "Value Hyp.",
+  "The What",
+  "The Who",
+  "The How",
   "Concept",
   "Implementation",
   "MVP Metrics",

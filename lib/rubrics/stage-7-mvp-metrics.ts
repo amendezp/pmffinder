@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { StageRubric } from "./types";
 
-export const stage5Schema = z.object({
+export const stage7Schema = z.object({
   business_type: z.enum(["consumer", "enterprise"]),
   metric_summary: z.string().min(60),
   consumer_growth_data: z.string().optional().default(""),
@@ -11,14 +11,14 @@ export const stage5Schema = z.object({
   intent_metrics_avoided: z.string().min(40),
 });
 
-export type Stage5Input = z.infer<typeof stage5Schema>;
+export type Stage7Input = z.infer<typeof stage7Schema>;
 
-export const stage5Rubric: StageRubric<Stage5Input> = {
-  stageNumber: 5,
+export const stage7Rubric: StageRubric<Stage7Input> = {
+  stageNumber: 7,
   title: "PMF Metrics",
   blurb:
     "Consumer: exponential organic growth. Enterprise: sales yield > 1. Behavior > intent. WoM > retention.",
-  schema: stage5Schema,
+  schema: stage7Schema,
   fields: [
     {
       key: "business_type",
@@ -109,7 +109,7 @@ export const stage5Rubric: StageRubric<Stage5Input> = {
         "Retention data is presented with real numbers. Acknowledged as necessary but not sufficient for PMF.",
     },
   ],
-  systemPrompt: `You are the grader for Stage 5 (Validate MVP with PMF Metrics).
+  systemPrompt: `You are the grader for Stage 7 (Validate MVP with PMF Metrics).
 
 You enforce:
 - For consumer businesses, the PMF signal is EXPONENTIAL ORGANIC GROWTH. Linear growth, growth from paid acquisition, or "growing 10% MoM" alone are NOT exponential organic growth. Look at the actual curve and numbers.
@@ -122,7 +122,7 @@ If the user has not yet shipped or has no real users, you should fail this stage
 
 You MUST call submit_rubric_result. Strict pass only.`,
   formatUserMessage(input, ctx) {
-    let body = `# Stage 5 submission — MVP PMF Metrics
+    let body = `# Stage 7 submission — MVP PMF Metrics
 
 ## Business type: ${input.business_type}
 

@@ -19,7 +19,7 @@ create index if not exists projects_user_idx on projects(user_id);
 create table if not exists stages (
   id            uuid primary key default gen_random_uuid(),
   project_id    uuid references projects(id) on delete cascade not null,
-  stage_number  int  not null check (stage_number between 1 and 7),
+  stage_number  int  not null check (stage_number between 1 and 9),
   status        text not null default 'locked'
     check (status in ('locked', 'in_progress', 'passed')),
   responses     jsonb not null default '{}'::jsonb,
@@ -35,7 +35,7 @@ create index if not exists stages_project_idx on stages(project_id);
 create table if not exists evidence (
   id            uuid primary key default gen_random_uuid(),
   project_id    uuid references projects(id) on delete cascade not null,
-  stage_number  int  not null check (stage_number between 1 and 7),
+  stage_number  int  not null check (stage_number between 1 and 9),
   kind          text not null check (kind in ('image', 'pdf', 'audio', 'note')),
   storage_path  text,
   caption       text,
@@ -49,7 +49,7 @@ create index if not exists evidence_project_stage_idx on evidence(project_id, st
 create table if not exists stage_chats (
   id            uuid primary key default gen_random_uuid(),
   project_id    uuid references projects(id) on delete cascade not null,
-  stage_number  int  not null check (stage_number between 1 and 7),
+  stage_number  int  not null check (stage_number between 1 and 9),
   messages      jsonb not null default '[]'::jsonb,
   updated_at    timestamptz not null default now(),
   unique (project_id, stage_number)

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { StageRubric } from "./types";
 
-export const stage3Schema = z.object({
+export const stage5Schema = z.object({
   method: z.enum(["concierge", "video", "smoke_test", "search_results", "kickstarter", "other"]),
   method_details: z.string().min(40),
   unmet_goals: z.string().min(60),
@@ -10,14 +10,14 @@ export const stage3Schema = z.object({
   prior_solutions: z.string().min(40),
 });
 
-export type Stage3Input = z.infer<typeof stage3Schema>;
+export type Stage5Input = z.infer<typeof stage5Schema>;
 
-export const stage3Rubric: StageRubric<Stage3Input> = {
-  stageNumber: 3,
+export const stage5Rubric: StageRubric<Stage5Input> = {
+  stageNumber: 5,
   title: "Validate Problem / Concept",
   blurb:
     "Listen for unmet goals tied to meaningful problems. Don't build yet — validate the concept first.",
-  schema: stage3Schema,
+  schema: stage5Schema,
   fields: [
     {
       key: "method",
@@ -105,7 +105,7 @@ export const stage3Rubric: StageRubric<Stage3Input> = {
         "The user knows what customers have tried before. People who've tried to build it themselves are gold.",
     },
   ],
-  systemPrompt: `You are the grader for Stage 3 (Validate Problem / Concept).
+  systemPrompt: `You are the grader for Stage 5 (Validate Problem / Concept).
 
 You enforce these canonical PMF standards:
 - The point of this stage is to validate the CONCEPT before building. Cheap, fast methods: concierge, video, smoke test, search results, Kickstarter, follow-me-home observation. A built MVP at this stage is over-investment.
@@ -127,7 +127,7 @@ Quote specifically from the user's prospect quotes when grading.
 
 You MUST call submit_rubric_result. passed=true only if every criterion is met. If the evidence sounds like sentiment ('they really liked it') without behavior, fail desperation_not_need.`,
   formatUserMessage(input, ctx) {
-    let body = `# Stage 3 submission — Validate Problem / Concept
+    let body = `# Stage 5 submission — Validate Problem / Concept
 
 ## Method (${input.method})
 ${input.method_details}

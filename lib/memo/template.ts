@@ -16,21 +16,21 @@ export const MEMO_SECTIONS: MemoSection[] = [
     wordTarget: 25,
     sourceStages: [2],
     guidance:
-      "One sentence. The product's reason to exist. Distilled from the Value Hypothesis 'What' — concrete, ambitious, but specific.",
+      "One sentence. The product's reason to exist. Distilled from the 'What' (Stage 2) — concrete, ambitious, but specific.",
   },
   {
     key: "problem",
     title: "The Problem",
     wordTarget: 120,
-    sourceStages: [3, 1],
+    sourceStages: [5, 1],
     guidance:
-      "What the target customer can't do today, and why it matters to them. Use language the customer would recognize. Cite the unmet goals heard in concept validation.",
+      "What the target customer can't do today, and why it matters to them. Use language the customer would recognize. Cite the unmet goals heard in concept validation (Stage 5).",
   },
   {
     key: "solution",
     title: "The Solution",
     wordTarget: 140,
-    sourceStages: [2, 4],
+    sourceStages: [2, 6],
     guidance:
       "What you've built (or are building). Anchor it to the unique insight from Stage 1. State the core value, not a feature list.",
   },
@@ -46,33 +46,33 @@ export const MEMO_SECTIONS: MemoSection[] = [
     key: "market_customer",
     title: "Market & Customer",
     wordTarget: 130,
-    sourceStages: [2, 3],
+    sourceStages: [3, 5],
     guidance:
-      "The lead bowling pin — the desperate segment — and the adjacent markets you can move into. Concrete profile.",
+      "The lead bowling pin — the desperate segment from Stage 3 — and the adjacent markets you can move into. Concrete profile.",
   },
   {
     key: "competition",
     title: "Competition / Alternatives",
     wordTarget: 100,
-    sourceStages: [3],
+    sourceStages: [5],
     guidance:
-      "What customers have tried before to solve this. Honest about real alternatives (incl. spreadsheets, manual workarounds). Why those fall short.",
+      "What customers have tried before to solve this (Stage 5). Honest about real alternatives (incl. spreadsheets, manual workarounds). Why those fall short.",
   },
   {
     key: "traction",
     title: "Traction & PMF Evidence",
     wordTarget: 140,
-    sourceStages: [5, 6, 4],
+    sourceStages: [7, 8, 6],
     guidance:
-      "Behavioral evidence: organic growth, sales yield, word of mouth, reach-across-table reactions, the surprise you're now doubling down on.",
+      "Behavioral evidence from Stages 6–8: organic growth, sales yield, word of mouth, reach-across-table reactions, the surprise you're now doubling down on.",
   },
   {
     key: "business_model",
     title: "Business Model",
     wordTarget: 90,
-    sourceStages: [2],
+    sourceStages: [4],
     guidance:
-      "How you charge and distribute. Note the disruptive angle if relevant (simpler/cheaper/more convenient).",
+      "How you charge and distribute (Stage 4). Note the disruptive angle if relevant (simpler/cheaper/more convenient).",
   },
   {
     key: "team_ask",

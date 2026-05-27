@@ -8,7 +8,7 @@ export default async function Page({
 }) {
   const { n } = await params;
   const stageNumber = Number(n);
-  if (!Number.isInteger(stageNumber) || stageNumber < 1 || stageNumber > 7) {
+  if (!Number.isInteger(stageNumber) || stageNumber < 1 || stageNumber > 9) {
     notFound();
   }
   return <GuestStagePage stageNumber={stageNumber} />;

@@ -7,13 +7,13 @@ import type { RubricResult } from "@/lib/rubrics";
 
 const authedBodySchema = z.object({
   projectId: z.string().uuid(),
-  stageNumber: z.number().int().min(1).max(7),
+  stageNumber: z.number().int().min(1).max(9),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   responses: z.any(),
 });
 
 const guestBodySchema = z.object({
-  stageNumber: z.number().int().min(1).max(7),
+  stageNumber: z.number().int().min(1).max(9),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   responses: z.any(),
   /** Last feedback (kept by client) so the grader can see iteration context. */
@@ -193,7 +193,7 @@ async function handleAuthed(_request: Request, json: unknown) {
     return NextResponse.json({ error: upsertError.message }, { status: 500 });
   }
 
-  if (result.passed && stageNumber < 7) {
+  if (result.passed && stageNumber < 9) {
     const next = stageNumber + 1;
     const { data: nextStage } = await supabase
       .from("stages")

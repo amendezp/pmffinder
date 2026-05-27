@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { StageRubric } from "./types";
 
-export const stage7Schema = z.object({
+export const stage9Schema = z.object({
   pmf_assessment: z.enum(["signal", "no_signal"]),
   assessment_evidence: z.string().min(80),
 
@@ -16,14 +16,14 @@ export const stage7Schema = z.object({
   revised_value_hypothesis: z.string().optional().default(""),
 });
 
-export type Stage7Input = z.infer<typeof stage7Schema>;
+export type Stage9Input = z.infer<typeof stage9Schema>;
 
-export const stage7Rubric: StageRubric<Stage7Input> = {
-  stageNumber: 7,
+export const stage9Rubric: StageRubric<Stage9Input> = {
+  stageNumber: 9,
   title: "Decision Tree",
   blurb:
     "3 months in: signal or no signal? If yes, draft the growth hypothesis. If no, pivot the Who (never the What).",
-  schema: stage7Schema,
+  schema: stage9Schema,
   fields: [
     {
       key: "pmf_assessment",
@@ -111,7 +111,7 @@ export const stage7Rubric: StageRubric<Stage7Input> = {
         "If no signal: user is not trying to accelerate growth, fix competition, or build brand — they're correctly returning to the value hypothesis. If signal: growth efforts don't yet include scale/barriers/brand prematurely.",
     },
   ],
-  systemPrompt: `You are the grader for Stage 7 (Decision Tree) — the branching exit of the PMF journey.
+  systemPrompt: `You are the grader for Stage 9 (Decision Tree) — the branching exit of the PMF journey.
 
 You enforce:
 - Be HONEST about whether there is a signal. The bar is exponential organic growth (consumer) or sales yield > 1 (enterprise). "Things are encouraging" or "MAU is growing" without the curve is NOT signal. PMF is either obvious or it is not — if the user is debating whether the curve has started bending, it hasn't. Push back if the assessment doesn't match the evidence.
@@ -141,7 +141,7 @@ Quote the user's response. Be specific.
 
 You MUST call submit_rubric_result. Strict pass.`,
   formatUserMessage(input, ctx) {
-    let body = `# Stage 7 submission — Decision Tree
+    let body = `# Stage 9 submission — Decision Tree
 
 ## PMF assessment: ${input.pmf_assessment}
 

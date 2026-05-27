@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { StageRubric } from "./types";
 
-export const stage4Schema = z.object({
+export const stage6Schema = z.object({
   sprint_summary: z.string().min(80),
   selling_approach: z.string().min(60),
   reach_across_table: z.string().min(40),
@@ -18,14 +18,14 @@ export const stage4Schema = z.object({
   bias_acknowledgement: z.string().min(40),
 });
 
-export type Stage4Input = z.infer<typeof stage4Schema>;
+export type Stage6Input = z.infer<typeof stage6Schema>;
 
-export const stage4Rubric: StageRubric<Stage4Input> = {
-  stageNumber: 4,
+export const stage6Rubric: StageRubric<Stage6Input> = {
+  stageNumber: 6,
   title: "Validate Implementation",
   blurb:
     "Design sprint: try to *sell* it. Listen for 'when can I have this?' Use the 5 Whys when they don't bite.",
-  schema: stage4Schema,
+  schema: stage6Schema,
   fields: [
     {
       key: "sprint_summary",
@@ -161,7 +161,7 @@ export const stage4Rubric: StageRubric<Stage4Input> = {
         "User shows awareness of confirmation bias, desirability bias, and the customer-can't-give-negative-feedback problem — and took steps to counter them.",
     },
   ],
-  systemPrompt: `You are the grader for Stage 4 (Validate Implementation).
+  systemPrompt: `You are the grader for Stage 6 (Validate Implementation).
 
 You enforce:
 - The implementation must be tested by *attempting to sell*. Asking what the customer wants is market research and is NOT valuable. If the user's sprint sounds like interviews asking "would you use this?", that's a fail.
@@ -182,7 +182,7 @@ Quote the user's responses. Be specific in feedback so they know exactly what to
 
 You MUST call submit_rubric_result. passed=true only if every criterion is met.`,
   formatUserMessage(input, ctx) {
-    let body = `# Stage 4 submission — Validate Implementation
+    let body = `# Stage 6 submission — Validate Implementation
 
 ## Design sprint summary
 ${input.sprint_summary}

@@ -53,44 +53,52 @@ export function ImportGuestBanner() {
   }
 
   return (
-    <div className="mb-6 rounded-md border border-brass-500/50 bg-parchment-100/90 p-4">
-      <h3 className="font-serif text-lg text-ink-900">Import your demo progress</h3>
-      <p className="mt-1 text-sm text-ink-700/85">
-        We saved your demo journey in this browser. Want to bring it in as a new
-        project? You can keep going from where you left off.
+    <div className="mb-8 border-l border-neon-cyan bg-gradient-to-r from-neon-cyan/10 to-transparent p-5">
+      <div className="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-neon-cyan">
+        <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-neon-cyan" />
+        Demo progress found
+      </div>
+      <h3 className="font-serif text-2xl italic text-white">
+        Want to keep your demo journey?
+      </h3>
+      <p className="mt-1 font-mono text-sm text-white/75">
+        We saved your demo in this browser. Bring it in as a new project and
+        pick up where you left off.
       </p>
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
         <input
           type="text"
           value={projectName}
           onChange={(e) => setProjectName(e.target.value)}
           placeholder="Project name"
-          className="rounded-md border border-ink-700/25 bg-parchment-50 px-3 py-1.5 text-sm"
+          className="border border-neon-cyan/30 bg-deep-blue/40 px-3 py-1.5 font-mono text-sm text-white placeholder:text-neon-cyan/40 focus:border-neon-cyan focus:outline-none"
         />
         <button
           type="button"
           onClick={importNow}
           disabled={busy || !projectName.trim()}
-          className="rounded-md bg-compass-rose px-3 py-1.5 text-sm font-serif text-parchment-50 hover:bg-compass-rose/90 disabled:opacity-60"
+          className="border border-neon-cyan bg-neon-cyan/15 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-neon-cyan hover:bg-neon-cyan hover:text-deep-blue disabled:opacity-60"
         >
           {busy ? "Importing…" : "Import as new project"}
         </button>
         <button
           type="button"
           onClick={discard}
-          className="rounded-md border border-ink-700/30 px-3 py-1.5 text-sm text-ink-700 hover:bg-parchment-50"
+          className="border border-neon-pink/30 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-neon-pink/80 hover:text-neon-pink"
         >
           Discard
         </button>
         <button
           type="button"
           onClick={dismiss}
-          className="text-xs text-ink-700/70 underline-offset-4 hover:underline"
+          className="font-mono text-[10px] uppercase tracking-widest text-neon-cyan/60 hover:text-white"
         >
           Not now
         </button>
       </div>
-      {error && <p className="mt-2 text-sm text-compass-rose">{error}</p>}
+      {error && (
+        <p className="mt-2 font-mono text-xs text-neon-pink">{error}</p>
+      )}
     </div>
   );
 }

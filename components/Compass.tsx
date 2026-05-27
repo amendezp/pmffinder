@@ -372,9 +372,9 @@ export function Compass({
                   fontSize={Math.max(9, size * 0.022)}
                   fill={isActive ? WHITE : isPassed ? CYAN : CYAN_30}
                   fontFamily='"Space Mono", monospace'
-                  style={{ letterSpacing: "0.12em" }}
+                  style={{ letterSpacing: "0.1em" }}
                 >
-                  {`TGT_${`0${w.stage}`.slice(-2)}`}{isActive ? ` // ${w.label.toUpperCase()}` : ""}
+                  {`0${w.stage}`.slice(-2)} — {w.label.toUpperCase()}
                 </text>
               )}
             </g>

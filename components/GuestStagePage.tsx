@@ -7,6 +7,7 @@ import { getRubric, type RubricResult } from "@/lib/rubrics";
 import { StageForm } from "./StageForm";
 import { GuestBanner } from "./GuestBanner";
 import { GuestCoachingChat } from "./GuestCoachingChat";
+import { StageStepper } from "./StageStepper";
 import {
   readGuestState,
   setStage,
@@ -20,11 +21,28 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
   const [mounted, setMounted] = useState(false);
   const [stageState, setStageState] = useState<GuestStageState | null>(null);
   const [gateOk, setGateOk] = useState(true);
+  const [allStages, setAllStages] = useState<
+    Array<{ stage_number: number; status: "locked" | "in_progress" | "passed" }>
+  >([]);
 
   useEffect(() => {
     setMounted(true);
     const state = readGuestState();
     setStageState(state.stages[stageNumber] ?? null);
+
+    // Build the stepper view from local state.
+    const sArr: Array<{ stage_number: number; status: "locked" | "in_progress" | "passed" }> = [];
+    for (let i = 1; i <= 7; i++) {
+      const s = state.stages[i];
+      const status: "locked" | "in_progress" | "passed" =
+        s?.status === "passed"
+          ? "passed"
+          : i === 1 || state.stages[i - 1]?.status === "passed"
+            ? "in_progress"
+            : "locked";
+      sArr.push({ stage_number: i, status });
+    }
+    setAllStages(sArr);
 
     // Enforce client-side gating — all prior stages must be passed.
     if (stageNumber > 1) {
@@ -92,22 +110,24 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
     }
   }
 
+  const nextN = stageNumber + 1;
+  const nextHref = nextN <= 7 ? `/try/stage/${nextN}` : "/try";
+
   return (
     <main className="relative mx-auto min-h-screen max-w-5xl px-6 py-10 md:px-12">
-      <header className="relative mb-10">
-        <div className="mb-3 flex items-center gap-4 font-mono text-xs uppercase tracking-widest opacity-80">
+      <header className="relative mb-8">
+        <div className="mb-3 flex items-center gap-4 font-mono text-xs uppercase tracking-widest text-neon-cyan/80">
           <div className="h-2 w-2 animate-pulse bg-neon-cyan" />
           <Link href="/try" className="hover:text-neon-cyan">
-            ← Back to scan
+            ← Your journey
           </Link>
           <div className="hud-line-decorator h-px flex-1 opacity-50" />
-          <span className="text-white/70">
-            TGT_{`0${stageNumber}`.slice(-2)} / 07 · DEMO
-          </span>
         </div>
         <div className="relative">
           <div className="absolute -left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-neon-cyan/0 via-neon-cyan to-neon-cyan/0" />
-          <h2 className="mb-1 font-mono text-sm text-white/70">Waypoint:</h2>
+          <h2 className="mb-1 font-mono text-sm uppercase tracking-widest text-neon-cyan/70">
+            Stage {stageNumber} of 7 · Demo
+          </h2>
           <h1 className="font-serif text-4xl italic text-white text-glow-white md:text-5xl">
             {rubric.title}
           </h1>
@@ -116,6 +136,16 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
           {rubric.blurb}
         </p>
       </header>
+
+      {allStages.length > 0 && (
+        <div className="mb-8">
+          <StageStepper
+            stages={allStages}
+            currentStage={stageNumber}
+            hrefForStage={(n) => `/try/stage/${n}`}
+          />
+        </div>
+      )}
 
       <div className="mb-6">
         <GuestBanner context="Demo mode — your progress lives in this browser. Sign in to upload screenshots/transcripts and save your journey." />
@@ -130,6 +160,8 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
             alreadyPassed={stageState?.status === "passed"}
             onGrade={onGrade}
             onSaveResponses={onSaveResponses}
+            nextStageHref={nextHref}
+            nextStageNumber={nextN <= 7 ? nextN : 8}
           />
         </section>
 
@@ -137,18 +169,18 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
           <div className="border-l border-neon-pink/40 bg-neon-pink/5 p-4">
             <div className="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-neon-pink">
               <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-neon-pink" />
-              Evidence // Locked
+              Sign in to unlock
             </div>
-            <h3 className="font-serif text-2xl italic text-white">Artifacts</h3>
+            <h3 className="font-serif text-2xl italic text-white">Evidence</h3>
             <p className="mt-2 font-mono text-xs leading-relaxed text-white/70">
-              Screenshots, transcripts, and inline notes unlock once you
-              authenticate. The grader uses them to verify claims.
+              Screenshots, transcripts, and inline notes unlock when you sign in.
+              The grader uses them to check your claims.
             </p>
             <Link
               href="/sign-in"
               className="mt-4 inline-block border border-neon-cyan bg-neon-cyan/10 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-neon-cyan hover:bg-neon-cyan hover:text-deep-blue"
             >
-              Authenticate to unlock →
+              Sign in to unlock →
             </Link>
           </div>
         </aside>

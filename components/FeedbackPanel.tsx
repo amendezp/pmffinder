@@ -1,9 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import type { RubricResult } from "@/lib/rubrics";
 
-export function FeedbackPanel({ feedback }: { feedback: RubricResult }) {
+interface FeedbackPanelProps {
+  feedback: RubricResult;
+  /** Render a "Continue to Stage N+1 →" CTA when passed. */
+  nextStageHref?: string;
+  nextStageNumber?: number;
+}
+
+export function FeedbackPanel({
+  feedback,
+  nextStageHref,
+  nextStageNumber,
+}: FeedbackPanelProps) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 8 }}
@@ -22,7 +34,7 @@ export function FeedbackPanel({ feedback }: { feedback: RubricResult }) {
             feedback.passed ? "text-white text-glow" : "text-white text-glow-pink",
           ].join(" ")}
         >
-          {feedback.passed ? "Target locked." : "Signal not clear yet."}
+          {feedback.passed ? "Stage passed." : "Not yet — keep going."}
         </h3>
         <span
           className={[
@@ -32,7 +44,7 @@ export function FeedbackPanel({ feedback }: { feedback: RubricResult }) {
               : "border-neon-pink/40 bg-neon-pink/10 text-neon-pink",
           ].join(" ")}
         >
-          {feedback.passed ? "PASSED" : "RETRY"}
+          {feedback.passed ? "Passed" : "Try again"}
         </span>
       </header>
 
@@ -76,13 +88,35 @@ export function FeedbackPanel({ feedback }: { feedback: RubricResult }) {
       {!feedback.passed && feedback.suggested_revisions.length > 0 && (
         <div className="mt-4 border-t border-neon-cyan/15 pt-3">
           <h4 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/80">
-            // Suggested course corrections
+            What to fix
           </h4>
           <ul className="ml-5 list-disc space-y-1 font-mono text-xs text-white/80">
             {feedback.suggested_revisions.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {feedback.passed && nextStageHref && nextStageNumber && nextStageNumber <= 7 && (
+        <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-neon-cyan/15 pt-4">
+          <Link
+            href={nextStageHref}
+            className="border border-neon-cyan bg-neon-cyan/15 px-5 py-2.5 font-mono text-xs uppercase tracking-widest text-neon-cyan shadow-cyber-glow transition hover:bg-neon-cyan hover:text-deep-blue"
+          >
+            Continue to stage {nextStageNumber} →
+          </Link>
+          <span className="font-mono text-[10px] uppercase tracking-widest text-neon-cyan/60">
+            {nextStageNumber === 8
+              ? "You're done — generate your memo"
+              : `${7 - nextStageNumber + 1} stages to go`}
+          </span>
+        </div>
+      )}
+
+      {feedback.passed && (!nextStageHref || (nextStageNumber ?? 8) > 7) && (
+        <div className="mt-5 border-t border-neon-cyan/15 pt-4 font-mono text-xs text-neon-cyan">
+          All seven stages passed. Time to generate your memo.
         </div>
       )}
     </motion.section>

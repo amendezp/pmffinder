@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Compass } from "./Compass";
 import { JourneyMap } from "./JourneyMap";
+import { StageStepper } from "./StageStepper";
 import {
   readGuestState,
   activeStageNumber,
@@ -46,56 +47,68 @@ export function GuestJourney() {
   }
 
   return (
-    <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,500px)]">
-      <section className="fade-in-up" style={{ animationDelay: "0.1s" }}>
-        <h2 className="mb-6 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/60">
-          <span>// Waypoints</span>
-          <div className="h-px flex-1 bg-neon-cyan/20" />
-        </h2>
-        <JourneyMap
-          projectId="try"
-          stages={stagesArr}
-          hrefForStage={(n) => `/try/stage/${n}`}
-        />
+    <div className="space-y-10">
+      {mounted && (
+        <div className="max-w-3xl fade-in-up">
+          <StageStepper
+            stages={stagesArr}
+            currentStage={active}
+            hrefForStage={(n) => `/try/stage/${n}`}
+          />
+        </div>
+      )}
 
-        {allPassed && (
-          <div className="mt-8 border-l border-neon-cyan bg-gradient-to-r from-neon-cyan/10 to-transparent px-5 py-4 shadow-cyber-glow">
-            <div className="mb-2 font-mono text-[10px] uppercase tracking-widest text-neon-cyan">
-              // All targets acquired
+      <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,500px)]">
+        <section className="fade-in-up" style={{ animationDelay: "0.1s" }}>
+          <h2 className="mb-6 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/70">
+            <span>The 7 stages</span>
+            <div className="h-px flex-1 bg-neon-cyan/20" />
+          </h2>
+          <JourneyMap
+            projectId="try"
+            stages={stagesArr}
+            hrefForStage={(n) => `/try/stage/${n}`}
+          />
+
+          {allPassed && (
+            <div className="mt-8 border-l border-neon-cyan bg-gradient-to-r from-neon-cyan/10 to-transparent px-5 py-4 shadow-cyber-glow">
+              <div className="mb-2 font-mono text-[10px] uppercase tracking-widest text-neon-cyan">
+                All seven stages passed
+              </div>
+              <h3 className="font-serif text-3xl italic text-white text-glow">
+                You're ready to export your memo.
+              </h3>
+              <p className="mb-3 mt-2 font-mono text-sm text-white/75">
+                Sign in to generate your Sequoia-style 2-pager. Your demo
+                progress will be saved as a new project.
+              </p>
+              <Link
+                href="/sign-in"
+                className="inline-block border border-neon-cyan bg-neon-cyan/10 px-5 py-2.5 font-mono text-xs uppercase tracking-widest text-neon-cyan transition hover:bg-neon-cyan hover:text-deep-blue"
+              >
+                Sign in to export →
+              </Link>
             </div>
-            <h3 className="font-serif text-3xl italic text-white text-glow">
-              Mission ready.
-            </h3>
-            <p className="mb-3 mt-2 font-mono text-sm text-white/75">
-              Authenticate to synthesize and export your Sequoia-style 2-pager memo.
-              Your demo progress will be imported as a new mission.
-            </p>
-            <Link
-              href="/sign-in"
-              className="inline-block border border-neon-cyan bg-neon-cyan/10 px-5 py-2.5 font-mono text-xs uppercase tracking-widest text-neon-cyan transition hover:bg-neon-cyan hover:text-deep-blue"
+          )}
+
+          {mounted && Object.keys(state?.stages ?? {}).length > 0 && (
+            <button
+              type="button"
+              onClick={resetDemo}
+              className="mt-8 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/50 hover:text-neon-pink"
             >
-              Authenticate to export memo →
-            </Link>
-          </div>
-        )}
+              Start the demo over
+            </button>
+          )}
+        </section>
 
-        {mounted && Object.keys(state?.stages ?? {}).length > 0 && (
-          <button
-            type="button"
-            onClick={resetDemo}
-            className="mt-8 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/50 hover:text-neon-pink"
-          >
-            // Reset demo scan
-          </button>
-        )}
-      </section>
-
-      <aside
-        className="flex justify-center lg:sticky lg:top-8 fade-in-up"
-        style={{ animationDelay: "0.15s" }}
-      >
-        <Compass activeStage={active} passedStages={passed} size={460} />
-      </aside>
+        <aside
+          className="flex justify-center lg:sticky lg:top-8 fade-in-up"
+          style={{ animationDelay: "0.15s" }}
+        >
+          <Compass activeStage={active} passedStages={passed} size={460} />
+        </aside>
+      </div>
     </div>
   );
 }

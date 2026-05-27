@@ -29,29 +29,26 @@ export default function SignInPage() {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center px-6">
-      <div className="absolute right-8 top-8 text-right font-mono text-[10px] tracking-widest text-neon-cyan/70 no-print">
-        <div className="mb-1">SYS // AUTH</div>
-        <Link href="/" className="text-white hover:text-neon-cyan">
-          ← PMFinder
-        </Link>
-      </div>
-
       <div className="relative z-10 w-full max-w-md fade-in-up">
-        <div className="mb-6 flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-neon-cyan">
+        <header className="mb-8 flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-neon-cyan/80">
           <div className="h-2 w-2 animate-pulse bg-neon-cyan" />
-          <span>Identify // Operator</span>
+          <Link href="/" className="hover:text-white">
+            ← PMFinder
+          </Link>
           <div className="hud-line-decorator h-px flex-1 opacity-50" />
-        </div>
+        </header>
 
         <div className="relative">
           <div className="absolute -left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-neon-cyan/0 via-neon-cyan to-neon-cyan/0" />
-          <h2 className="mb-1 font-mono text-sm text-white/70">Authenticate:</h2>
-          <h1 className="font-serif text-5xl italic text-white text-glow-white">
+          <h2 className="mb-2 font-mono text-sm uppercase tracking-widest text-neon-cyan/70">
             Sign in
+          </h2>
+          <h1 className="font-serif text-5xl italic text-white text-glow-white">
+            Welcome back
           </h1>
         </div>
-        <p className="mb-8 mt-3 font-mono text-sm text-white/70">
-          A magic link will be transmitted to your email. No password required.
+        <p className="mb-8 mt-3 font-mono text-sm text-white/75">
+          We&rsquo;ll email you a magic link. No password.
         </p>
 
         <form onSubmit={send} className="space-y-4">
@@ -60,21 +57,21 @@ export default function SignInPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="operator@example.com"
+            placeholder="you@example.com"
             className="w-full border-b border-neon-cyan/30 bg-transparent px-1 py-2 font-mono text-white placeholder:text-neon-cyan/40 focus:border-neon-cyan focus:outline-none"
           />
           <button
             type="submit"
             disabled={status === "sending"}
-            className="w-full border border-neon-cyan bg-neon-cyan/10 py-3 font-mono text-xs uppercase tracking-widest text-neon-cyan shadow-cyber-glow transition hover:bg-neon-cyan hover:text-deep-blue disabled:opacity-60"
+            className="w-full border border-neon-cyan bg-neon-cyan/15 py-3 font-mono text-xs uppercase tracking-widest text-neon-cyan shadow-cyber-glow transition hover:bg-neon-cyan hover:text-deep-blue disabled:opacity-60"
           >
-            {status === "sending" ? "Transmitting…" : "Send magic link"}
+            {status === "sending" ? "Sending…" : "Send magic link"}
           </button>
         </form>
 
         {status === "sent" && (
           <p className="mt-6 border-l-2 border-neon-cyan bg-neon-cyan/5 px-3 py-2 font-mono text-sm text-white">
-            Check your inbox. Click the link to sign in.
+            Check your inbox — click the link to sign in.
           </p>
         )}
         {status === "error" && error && (
@@ -83,9 +80,9 @@ export default function SignInPage() {
           </p>
         )}
 
-        <div className="mt-10 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/60">
+        <div className="mt-10 font-mono text-[11px] uppercase tracking-widest text-neon-cyan/60">
           <Link href="/try" className="hover:text-white">
-            Or run demo scan without authentication →
+            Or try the demo without signing in →
           </Link>
         </div>
       </div>

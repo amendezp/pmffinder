@@ -5,6 +5,7 @@ import { getRubric } from "@/lib/rubrics";
 import { AuthedStageFormWrapper } from "@/components/AuthedStageFormWrapper";
 import { EvidencePanel, type EvidenceItem } from "@/components/EvidencePanel";
 import { CoachingChat } from "@/components/CoachingChat";
+import { StageStepper } from "@/components/StageStepper";
 import type { RubricResult } from "@/lib/rubrics";
 
 export default async function StagePage({
@@ -65,26 +66,35 @@ export default async function StagePage({
     .eq("stage_number", stageNumber)
     .maybeSingle();
 
+  // All stages for the stepper at the top.
+  const { data: allStagesRaw } = await supabase
+    .from("stages")
+    .select("stage_number, status")
+    .eq("project_id", id);
+  const allStages = (allStagesRaw ?? []) as Array<{
+    stage_number: number;
+    status: "locked" | "in_progress" | "passed";
+  }>;
+
   const evidence = (evidenceRows ?? []) as EvidenceItem[];
   const chatMessages =
     (chatRow?.messages as Array<{ role: "user" | "assistant"; content: string }>) ?? [];
 
   return (
     <main className="relative mx-auto min-h-screen max-w-5xl px-6 py-10 md:px-12">
-      <header className="relative mb-10">
-        <div className="mb-3 flex items-center gap-4 font-mono text-xs uppercase tracking-widest opacity-80">
+      <header className="relative mb-8">
+        <div className="mb-3 flex items-center gap-4 font-mono text-xs uppercase tracking-widest text-neon-cyan/80">
           <div className="h-2 w-2 animate-pulse bg-neon-cyan" />
           <Link href={`/projects/${id}`} className="hover:text-neon-cyan">
-            ← Back to scan
+            ← {project.name}
           </Link>
           <div className="hud-line-decorator h-px flex-1 opacity-50" />
-          <span className="text-white/70">
-            TGT_{`0${stageNumber}`.slice(-2)} / 07
-          </span>
         </div>
         <div className="relative">
           <div className="absolute -left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-neon-cyan/0 via-neon-cyan to-neon-cyan/0" />
-          <h2 className="mb-1 font-mono text-sm text-white/70">Waypoint:</h2>
+          <h2 className="mb-1 font-mono text-sm uppercase tracking-widest text-neon-cyan/70">
+            Stage {stageNumber} of 7
+          </h2>
           <h1 className="font-serif text-4xl italic text-white text-glow-white md:text-5xl">
             {rubric.title}
           </h1>
@@ -93,6 +103,14 @@ export default async function StagePage({
           {rubric.blurb}
         </p>
       </header>
+
+      <div className="mb-10">
+        <StageStepper
+          stages={allStages}
+          currentStage={stageNumber}
+          hrefForStage={(n) => `/projects/${id}/stage/${n}`}
+        />
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)]">
         <section>

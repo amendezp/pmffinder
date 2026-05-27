@@ -12,9 +12,9 @@ interface JourneyMapProps {
 }
 
 const STATUS_TEXT: Record<"locked" | "in_progress" | "passed", string> = {
-  locked: "STANDBY",
-  in_progress: "TRACKING",
-  passed: "LOCKED ON",
+  locked: "Locked",
+  in_progress: "In progress",
+  passed: "Passed",
 };
 
 export function JourneyMap({ projectId, stages, hrefForStage }: JourneyMapProps) {
@@ -97,10 +97,9 @@ export function JourneyMap({ projectId, stages, hrefForStage }: JourneyMapProps)
             </p>
 
             <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-widest">
-              <span className="text-neon-cyan/60">Signal</span>
+              <span className="text-neon-cyan/60">Status</span>
               <span
                 className={[
-                  "font-bold",
                   isPassed
                     ? "text-white text-glow-white"
                     : isActive

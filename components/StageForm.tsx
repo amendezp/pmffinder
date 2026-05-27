@@ -17,6 +17,9 @@ interface StageFormProps {
     feedback: RubricResult
   ) => void;
   belowFormNotice?: React.ReactNode;
+  /** Builds a URL for the next stage; used by FeedbackPanel's continue CTA. */
+  nextStageHref?: string;
+  nextStageNumber?: number;
 }
 
 function Field({
@@ -127,6 +130,8 @@ export function StageForm({
   onGrade,
   onSaveResponses,
   belowFormNotice,
+  nextStageHref,
+  nextStageNumber,
 }: StageFormProps) {
   const [values, setValues] = useState<Record<string, string>>(() => {
     const base: Record<string, string> = {};
@@ -147,6 +152,12 @@ export function StageForm({
       const result = await onGrade(values);
       setFeedback(result);
       onSaveResponses?.(values, result);
+      if (result.passed && typeof window !== "undefined") {
+        // Scroll the feedback (with the Continue CTA) into view.
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to grade.");
     } finally {
@@ -178,17 +189,23 @@ export function StageForm({
           className="border border-neon-cyan bg-neon-cyan/10 px-6 py-2.5 font-mono text-xs uppercase tracking-widest text-neon-cyan shadow-cyber-glow transition hover:bg-neon-cyan hover:text-deep-blue disabled:opacity-60"
         >
           {submitting
-            ? "Transmitting…"
+            ? "Grading…"
             : alreadyPassed
-              ? "Re-submit for analysis"
-              : "Submit for analysis"}
+              ? "Re-submit"
+              : "Submit for grading"}
         </button>
         {error && (
           <span className="font-mono text-xs text-neon-pink">{error}</span>
         )}
       </div>
 
-      {feedback && <FeedbackPanel feedback={feedback} />}
+      {feedback && (
+        <FeedbackPanel
+          feedback={feedback}
+          nextStageHref={nextStageHref}
+          nextStageNumber={nextStageNumber}
+        />
+      )}
     </div>
   );
 }

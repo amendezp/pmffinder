@@ -80,7 +80,7 @@ export const stage7Rubric: StageRubric<Stage7Input> = {
       key: "pivoted_who",
       label: "(If no signal) The pivoted Who",
       helper:
-        "Pivot is on the WHO, not the WHAT. Changing the What would obsolete your insight. Who else might be desperate for this same value?",
+        "Pivot is on the WHO, not the WHAT. Changing the What would obsolete your unique insight. Who else might be desperate for this same value?",
       kind: "long_text",
       rows: 4,
     },
@@ -115,8 +115,8 @@ export const stage7Rubric: StageRubric<Stage7Input> = {
 
 You enforce:
 - Be HONEST about whether there is a signal. The bar is exponential organic growth (consumer) or sales yield > 1 (enterprise). "Things are encouraging" or "MAU is growing" without the curve is NOT signal. Push back if the assessment doesn't match the evidence.
-- IF SIGNAL: a growth hypothesis must be provided. It is DISTINCT from the value hypothesis. It focuses on cost-effective customer acquisition. It must NOT yet focus on building brand, scale, barriers to entry, competition response, or margin optimization — per the lecture, those are distractions before PMF and even right after.
-- IF NO SIGNAL: the founder must (a) run 5 Whys with NON-ADOPTERS to reach a root cause, (b) pivot the WHO (not the What — changing the What obsoletes the insight), (c) revise the value hypothesis to re-run. If they're pivoting the What, fail correct_branch.
+- IF SIGNAL: a growth hypothesis must be provided. It is DISTINCT from the value hypothesis. It focuses on cost-effective customer acquisition. It must NOT yet focus on building brand, scale, barriers to entry, competition response, or margin optimization — those are distractions before PMF and even right after.
+- IF NO SIGNAL: the founder must (a) run 5 Whys with NON-ADOPTERS to reach a root cause, (b) pivot the WHO (not the What — changing the What obsoletes the unique insight), (c) revise the value hypothesis to re-run. If they're pivoting the What, fail correct_branch.
 - 5 Whys: surface answers (no time, no budget) aren't root causes. Push for structural reasons.
 
 Quote the user's response. Be specific.

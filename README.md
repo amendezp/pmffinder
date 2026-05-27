@@ -2,12 +2,12 @@
 
 A guided journey app that gates your progress through the **scientific Product/Market Fit process** — sourcing, hypothesis, validation, metrics, surprise, decision — until you've genuinely earned each waypoint, then exports a Sequoia-style 2-pager memo.
 
-Built on the PMF principles taught by Andy Rachleff: *"When a great team meets a great market, something special happens."*
+*"When a great team meets a great market, something special happens."*
 
 ## What it does
 
-- **7 gated stages**, each with a structured form drawn from your PMF class notes.
-- **Claude grades each stage** against a rubric encoded from those notes — non-consensus insight, technological inflection, desperate (not needing) customers, behavioral (not intent) metrics, savor the surprise, pivot the Who not the What.
+- **7 gated stages**, each with a structured form.
+- **Claude grades each stage** against an encoded rubric — unique (non-consensus) insight, technological inflection, desperate (not needing) customers, behavioral (not intent) metrics, savor the surprise, pivot the Who not the What.
 - **Per-stage evidence panel**: upload screenshots, paste transcripts. Images are passed to the grader so it can verify your claims.
 - **Coaching chat per stage**: Socratic helper that uses the same rubric, but doesn't grade — pressure-test your draft before submitting.
 - **Sequoia-style 2-pager memo** synthesized from all 7 stages, printable to PDF, shareable via public token link.
@@ -98,8 +98,8 @@ db/                             # schema.sql + policies.sql
 
 | # | Stage | What it checks |
 |---|---|---|
-| 1 | Sourcing & Vetting | Technological inflection (durable), non-consensus insight, authenticity, idea found you |
-| 2 | Value Hypothesis | What rooted in insight; Who is a specific desperate segment; clear business model |
+| 1 | Sourcing & Vetting | Technological inflection (durable), unique non-consensus insight, authenticity, idea found you |
+| 2 | Value Hypothesis | What rooted in the unique insight; Who is a specific desperate segment; clear business model |
 | 3 | Validate Problem / Concept | Cheap concept-validation method; desperation (not need); prior solution attempts |
 | 4 | Validate Implementation | Tried to sell (not asked); behavioral signal; 5 Whys to root cause; biases countered |
 | 5 | MVP PMF Metrics | Behavior-based; exponential organic growth (consumer) or sales yield > 1 (enterprise); word of mouth |

@@ -70,9 +70,8 @@ export default async function Landing() {
         </section>
 
         <footer className="mt-20 border-t border-ink-700/15 pt-6 text-xs text-ink-700/70">
-          Built on the PMF principles of Andy Rachleff. "When a great team meets
-          a lousy market, market wins. When a great team meets a great market —
-          something special happens."
+          "When a great team meets a lousy market, market wins. When a great team
+          meets a great market — something special happens."
         </footer>
       </div>
     </main>

@@ -32,7 +32,7 @@ export const MEMO_SECTIONS: MemoSection[] = [
     wordTarget: 140,
     sourceStages: [2, 4],
     guidance:
-      "What you've built (or are building). Anchor it to the insight from Stage 1. State the core value, not a feature list.",
+      "What you've built (or are building). Anchor it to the unique insight from Stage 1. State the core value, not a feature list.",
   },
   {
     key: "why_now",
@@ -40,7 +40,7 @@ export const MEMO_SECTIONS: MemoSection[] = [
     wordTarget: 110,
     sourceStages: [1],
     guidance:
-      "The technological inflection. Why this is possible now and wasn't before. What unlocks this opportunity in this window.",
+      "The technological inflection. Why this is possible now and wasn't before. What technological shift unlocks this opportunity in this window.",
   },
   {
     key: "market_customer",

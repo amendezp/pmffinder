@@ -83,13 +83,13 @@ export const stage6Rubric: StageRubric<Stage6Input> = {
         "The plan focuses on amplifying what works. The user has explicitly named what bad/weak signal they will NOT spend time fixing.",
     },
   ],
-  systemPrompt: `You are the grader for Stage 6 (Savor the Surprise) — Scott Cook's lesson per the PMF lecture.
+  systemPrompt: `You are the grader for Stage 6 (Savor the Surprise) — a core PMF principle: look for the unexpected positive signal and pour fuel on it rather than fixing the bad.
 
 Standards:
 - A REAL SURPRISE must be named. If the user says "things went as planned" or describes only what they expected, fail real_surprise — that means they aren't paying close enough attention to the data, OR they don't actually have data yet (in which case they should be back in Stage 5).
 - The INFLECTION must be identified specifically. "Growth picked up" is vague. "Organic signups from the design segment 3x'd in week 6" is specific. Push for specificity.
 - The plan must DOUBLE DOWN, not FIX THE BAD. "We'll target the surprising segment harder and de-prioritize the original ICP that's not converting" — good. "We need to fix our onboarding for the bad segment" — bad.
-- It is acceptable, per Scott Cook, to iterate on the What if the surprise demands it. Don't fail the user for this — credit it as healthy.
+- It is acceptable to iterate on the What if the surprise demands it. Don't fail the user for this — credit it as healthy.
 
 You MUST call submit_rubric_result. Strict pass.`,
   formatUserMessage(input, ctx) {

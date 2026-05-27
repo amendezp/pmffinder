@@ -19,7 +19,7 @@ export const stage2Rubric: StageRubric<Stage2Input> = {
   stageNumber: 2,
   title: "Value Hypothesis",
   blurb:
-    "The What, Who, and How — rooted in your insight. You won't change the What. You'll iterate on the Who.",
+    "The What, Who, and How — rooted in your unique insight. You won't change the What. You'll iterate on the Who.",
   schema: stage2Schema,
   fields: [
     {
@@ -33,9 +33,9 @@ export const stage2Rubric: StageRubric<Stage2Input> = {
     },
     {
       key: "what_rooted_in_insight",
-      label: "How is this What rooted in your insight from Stage 1?",
+      label: "How is this What rooted in your unique insight from Stage 1?",
       helper:
-        "If you swapped this What for any other, would your insight still be relevant? If yes, the What isn't rooted enough.",
+        "If you swapped this What for any other, would your unique insight still be relevant? If yes, the What isn't rooted enough.",
       kind: "long_text",
       rows: 3,
       required: true,
@@ -108,9 +108,9 @@ export const stage2Rubric: StageRubric<Stage2Input> = {
   criteria: [
     {
       id: "what_rooted_in_insight",
-      name: "What is rooted in the insight",
+      name: "What is rooted in the unique insight",
       description:
-        "The What follows from the Stage 1 insight, not from a market-search-for-a-solution. Changing the What would obsolete the insight.",
+        "The What follows from the Stage 1 unique insight, not from a market-search-for-a-solution. Changing the What would obsolete the unique insight.",
     },
     {
       id: "who_specific",
@@ -131,17 +131,17 @@ export const stage2Rubric: StageRubric<Stage2Input> = {
         "How you charge and distribute is specified. Non-ad models should charge from MVP. Apparent vs embedded fees are considered.",
     },
   ],
-  systemPrompt: `You are the grader for Stage 2 (Value Hypothesis) of a PMF journey app, applying Andy Rachleff's standards.
+  systemPrompt: `You are the grader for Stage 2 (Value Hypothesis) of a Product/Market Fit journey app, applying canonical PMF standards.
 
-The Value Hypothesis = What + Who + How, rooted in the Stage 1 insight. You enforce:
-- The What MUST be rooted in the insight. If swapping the What for a different product wouldn't change the insight's relevance, the What isn't rooted.
+The Value Hypothesis = What + Who + How, rooted in the Stage 1 unique insight. You enforce:
+- The What MUST be rooted in the unique insight. If swapping the What for a different product wouldn't change the unique insight's relevance, the What isn't rooted.
 - The Who must be a SPECIFIC bowling-pin segment along a real dimension (consumer: psycho/demo/behavioral/geo/JTBD; enterprise: vertical/function/size/geo/JTBD). 'Everyone', 'busy professionals', 'SMBs' = fail.
 - The Who must be plausibly DESPERATE, not 'needing'. Desperation looks like: reaching across the table; willing to pay with little proof; tried to build it themselves. 'They'd find it useful' or 'this saves time' is not desperation.
 - The How specifies a business model. Non-ad models should plan to charge from MVP — if not, that's a warning sign that the customer isn't desperate. Note this if relevant.
 - Disruptive angle is OPTIONAL but worth crediting when present. Disruption ≠ 'better, faster, cheaper'. Disruption = simpler, cheaper, more convenient (new-market or low-end).
-- The What is the only thing the founder won't change going forward. They'll iterate on the Who. Don't grade this stage on whether the What is "the right one" — grade on whether it's coherently rooted in the insight and clearly stated.
+- The What is the only thing the founder won't change going forward. They'll iterate on the Who. Don't grade this stage on whether the What is "the right one" — grade on whether it's coherently rooted in the unique insight and clearly stated.
 
-You may NOT pass a submission where the Who is generic, the desperation evidence is just stated intent ("they say they'd use it"), or the What is disconnected from the insight.
+You may NOT pass a submission where the Who is generic, the desperation evidence is just stated intent ("they say they'd use it"), or the What is disconnected from the unique insight.
 
 You MUST call the submit_rubric_result tool exactly once with passed=true only if every criterion is met. Quote phrases from the user's response when explaining your verdict.`,
   formatUserMessage(input, ctx) {
@@ -150,7 +150,7 @@ You MUST call the submit_rubric_result tool exactly once with passed=true only i
 ## The What
 ${input.what}
 
-## How the What is rooted in the insight
+## How the What is rooted in the unique insight
 ${input.what_rooted_in_insight}
 
 ## The Who (lead bowling pin)

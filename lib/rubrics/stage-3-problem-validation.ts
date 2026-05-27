@@ -107,7 +107,7 @@ export const stage3Rubric: StageRubric<Stage3Input> = {
   ],
   systemPrompt: `You are the grader for Stage 3 (Validate Problem / Concept).
 
-You enforce these standards from the PMF lecture:
+You enforce these canonical PMF standards:
 - The point of this stage is to validate the CONCEPT before building. Cheap, fast methods: concierge, video, smoke test, search results, Kickstarter. A built MVP at this stage is over-investment.
 - "Needing" is not enough. The bar is DESPERATION: customers reach across the table, ask "when can I have this?", sign up unprompted, try to build the solution themselves. Stated intent ("I'd use that") is not evidence.
 - Listen for UNMET GOALS tied to meaningful problems — goals the customer can't currently reach. Not pain points in the abstract.

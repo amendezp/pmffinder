@@ -16,14 +16,14 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
   stageNumber: 1,
   title: "Sourcing & Vetting",
   blurb:
-    "Great ideas find you — they don't come from brainstorming. Anchor your insight in an inflection point.",
+    "Great ideas find you — they don't come from brainstorming. Anchor your unique insight in a technological inflection.",
   schema: stage1Schema,
   fields: [
     {
       key: "origin_story",
       label: "How did this idea find you?",
       helper:
-        "The PMF notes are blunt: insights are non-consensus by definition. Tell the unusual story — what were you doing, what did you notice, why couldn't you let it go?",
+        "A unique insight is non-consensus by definition. Tell the unusual story — what were you doing, what did you notice, why couldn't you let it go?",
       kind: "long_text",
       rows: 6,
       placeholder:
@@ -32,18 +32,18 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
     },
     {
       key: "inflection_point",
-      label: "The inflection point",
+      label: "The technological inflection",
       helper:
-        "What changed in the world that makes this possible *now*? Without change, there is seldom opportunity.",
+        "What changed in technology that makes this possible *now*? Behavioral, cultural, and regulatory shifts don't count — the bar here is a real technological inflection.",
       kind: "long_text",
       rows: 4,
       required: true,
     },
     {
       key: "inflection_category",
-      label: "What kind of inflection is it?",
+      label: "Confirm: is this inflection actually technological?",
       helper:
-        "Technology inflections are more durable than behavioral, cultural, or regulatory ones — that's the bar for a tech company.",
+        "Technological inflections are far more durable than behavioral, cultural, or regulatory ones. If you check anything other than technological, this stage will not pass.",
       kind: "radio",
       required: true,
       options: [
@@ -55,9 +55,9 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
     },
     {
       key: "insight",
-      label: "The insight",
+      label: "The unique insight",
       helper:
-        "What do you believe that most people don't? An idea that everyone already agrees with isn't an insight — it's consensus.",
+        "What do you believe that most people don't? An idea everyone already agrees with isn't a unique insight — it's consensus.",
       kind: "long_text",
       rows: 4,
       required: true,
@@ -85,19 +85,19 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
       id: "tech_inflection",
       name: "Technological inflection",
       description:
-        "The inflection is rooted in technology change (more enduring than behavior, culture, regulation).",
+        "The inflection is rooted in technology change (more enduring than behavior, culture, or regulation).",
     },
     {
       id: "non_consensus",
-      name: "Non-consensus insight",
+      name: "Unique, non-consensus insight",
       description:
-        "The insight is something most people would *not* immediately agree with. Right + non-consensus is where outsized returns live.",
+        "The unique insight is something most people would *not* immediately agree with. Right + non-consensus is where outsized returns live.",
     },
     {
       id: "authenticity",
       name: "Authenticity to the market",
       description:
-        "There is a credible reason this founder, specifically, can see the inflection — lived experience, technical depth, cross-field connection.",
+        "There is a credible reason this founder, specifically, can see the technological inflection — lived experience, technical depth, cross-field connection.",
     },
     {
       id: "found_you",
@@ -106,14 +106,14 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
         "The origin story shows the idea emerged from observation/practice, not from a 'let's come up with ideas' meeting.",
     },
   ],
-  systemPrompt: `You are the grader for Stage 1 (Sourcing & Vetting Ideas) of a Product/Market Fit journey app, applying the standards from Andy Rachleff's PMF lecture.
+  systemPrompt: `You are the grader for Stage 1 (Sourcing & Vetting Ideas) of a Product/Market Fit journey app, applying canonical product/market fit standards.
 
 The bar to PASS this stage is high but specific. You grade strictly because the app refuses to advance the user until they meet the bar — your job is to push them to clarify or pivot, not to be nice.
 
 Key principles you enforce:
-- Great tech companies start with an INFLECTION POINT that enables a new type of product. **Technological** inflections are far more durable than behavioral, cultural, or regulatory ones. Behavioral/cultural/regulatory inflections do NOT pass on their own.
-- The insight must be NON-CONSENSUS. "Right + non-consensus" is where outsized returns come from. If the insight is something a generic MBA would write down ("AI is transforming X"), it is consensus and fails.
-- AUTHENTICITY: there must be a credible reason this founder can see this inflection. Generic curiosity is not authenticity. Lived experience, deep technical familiarity, or cross-field expertise are.
+- Great tech companies start with a TECHNOLOGICAL INFLECTION that enables a new type of product. Technological inflections are far more durable than behavioral, cultural, or regulatory ones. Behavioral/cultural/regulatory inflections do NOT pass on their own.
+- The unique insight must be NON-CONSENSUS. "Right + non-consensus" is where outsized returns come from. If the unique insight is something a generic MBA would write down ("AI is transforming X"), it is consensus and fails.
+- AUTHENTICITY: there must be a credible reason this founder can see this technological inflection. Generic curiosity is not authenticity. Lived experience, deep technical familiarity, or cross-field expertise are.
 - Great ideas FIND YOU. If the origin story sounds like a brainstorming output or "I was looking for a startup idea", that's a fail signal.
 - "Solving your own problem" alone is a weaker form of authenticity — note it but do not auto-fail.
 
@@ -126,10 +126,10 @@ You MUST call the submit_rubric_result tool exactly once with the structured res
 ## Origin story
 ${input.origin_story}
 
-## Inflection point (category: ${input.inflection_category})
+## Technological inflection (self-classified as: ${input.inflection_category})
 ${input.inflection_point}
 
-## The insight
+## The unique insight
 ${input.insight}
 
 ## Why this founder

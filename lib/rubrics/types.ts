@@ -10,7 +10,7 @@ export type StageNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export interface Criterion {
   id: string;
   name: string;
-  /** What it means to satisfy this criterion, drawn from the PMF notes. */
+  /** What it means to satisfy this criterion. */
   description: string;
 }
 
@@ -47,8 +47,8 @@ export interface StageRubric<TInput> {
   /** The criteria Claude evaluates. */
   criteria: Criterion[];
   /**
-   * System prompt for the grader. Should encode the PMF notes' bar for this
-   * stage and instruct Claude to return the RubricResult JSON via tool use.
+   * System prompt for the grader. Encodes the bar for this stage and
+   * instructs Claude to return the RubricResult JSON via tool use.
    */
   systemPrompt: string;
   /**

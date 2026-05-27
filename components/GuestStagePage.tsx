@@ -8,6 +8,7 @@ import { StageForm } from "./StageForm";
 import { GuestBanner } from "./GuestBanner";
 import { GuestCoachingChat } from "./GuestCoachingChat";
 import { StageStepper } from "./StageStepper";
+import { ReferencePanel } from "./ReferencePanel";
 import {
   readGuestState,
   setStage,
@@ -138,7 +139,14 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
           />
         </section>
 
-        <aside>
+        <aside className="space-y-6">
+          {rubric.referenceQuestions && (
+            <ReferencePanel
+              questions={rubric.referenceQuestions}
+              title={`Stage ${stageNumber} · Question bank`}
+              attribution="Adapted from Unusual Ventures' customer development framework."
+            />
+          )}
           <div className="border-l border-neon-pink/40 bg-neon-pink/5 p-4">
             <div className="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-neon-pink">
               <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-neon-pink" />

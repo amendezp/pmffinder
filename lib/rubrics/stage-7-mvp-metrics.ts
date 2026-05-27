@@ -41,19 +41,25 @@ export const stage7Rubric: StageRubric<Stage7Input> = {
     },
     {
       key: "consumer_growth_data",
-      label: "(Consumer) Organic growth curve",
+      label: "Organic growth curve",
       helper:
         "Daily/weekly new users from organic channels only. Paste numbers, screenshots of charts, or describe the curve. Exponential = the only pass.",
       kind: "long_text",
       rows: 5,
+      required: true,
+      minLength: 40,
+      showWhen: { key: "business_type", equals: "consumer" },
     },
     {
       key: "enterprise_sales_yield",
-      label: "(Enterprise) Sales yield calculation",
+      label: "Sales yield calculation",
       helper:
         "Sales yield = annual revenue per sales rep divided by their fully-loaded cost (or whatever your team's definition is). Show the math. > 1 is the inflection.",
       kind: "long_text",
       rows: 5,
+      required: true,
+      minLength: 40,
+      showWhen: { key: "business_type", equals: "enterprise" },
     },
     {
       key: "retention_data",

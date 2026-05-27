@@ -1,5 +1,40 @@
 import { z } from "zod";
-import type { StageRubric } from "./types";
+import type { StageRubric, ReferenceQuestions } from "./types";
+
+const IMPLEMENTATION_TEST_QUESTIONS: ReferenceQuestions = [
+  {
+    category: "Feedback on user experience",
+    questions: [
+      "When you saw the solution, what's the first thing you noticed or wanted to try?",
+      "What did you expect to happen when you did [specific action]?",
+      "Where did you get confused or frustrated?",
+      "What felt unnecessary or added friction?",
+    ],
+  },
+  {
+    category: "Better or worse than current solution",
+    questions: [
+      "How did doing it with this solution compare to how you do this today?",
+      "Do you think this would work in your environment?",
+      "If this were part of your workflow, what would it replace?",
+      "If you couldn't use this, what would you go back to doing?",
+    ],
+  },
+  {
+    category: "What would make it wildly successful",
+    questions: [
+      "What would make this 10x better for you?",
+      "If this were fully released today, what would prevent you from using it?",
+    ],
+  },
+  {
+    category: "Measurable impact",
+    questions: [
+      "What measurable impact would this solution have on your day-to-day?",
+      "What goals does your boss have for the company that would be met if you used this solution?",
+    ],
+  },
+];
 
 export const stage6Schema = z.object({
   sprint_summary: z.string().min(80),
@@ -181,6 +216,7 @@ Use these to check whether the user's sprint asked the right things:
 Quote the user's responses. Be specific in feedback so they know exactly what to fix.
 
 You MUST call submit_rubric_result. passed=true only if every criterion is met.`,
+  referenceQuestions: IMPLEMENTATION_TEST_QUESTIONS,
   formatUserMessage(input, ctx) {
     let body = `# Stage 6 submission — Validate Implementation
 

@@ -6,6 +6,7 @@ import { AuthedStageFormWrapper } from "@/components/AuthedStageFormWrapper";
 import { EvidencePanel, type EvidenceItem } from "@/components/EvidencePanel";
 import { CoachingChat } from "@/components/CoachingChat";
 import { StageStepper } from "@/components/StageStepper";
+import { ReferencePanel } from "@/components/ReferencePanel";
 import type { RubricResult } from "@/lib/rubrics";
 
 export default async function StagePage({
@@ -112,7 +113,14 @@ export default async function StagePage({
           />
         </section>
 
-        <aside>
+        <aside className="space-y-6">
+          {rubric.referenceQuestions && (
+            <ReferencePanel
+              questions={rubric.referenceQuestions}
+              title={`Stage ${stageNumber} · Question bank`}
+              attribution="Adapted from Unusual Ventures' customer development framework."
+            />
+          )}
           <EvidencePanel projectId={id} stageNumber={stageNumber} items={evidence} />
         </aside>
       </div>

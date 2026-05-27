@@ -22,6 +22,20 @@ interface StageFormProps {
 }
 
 /**
+ * True when a field's showWhen condition is satisfied (or there isn't one).
+ * Hidden fields are skipped during validation and aren't rendered.
+ */
+function isFieldVisible(
+  field: StageField,
+  values: Record<string, string>
+): boolean {
+  if (!field.showWhen) return true;
+  const actual = values[field.showWhen.key] ?? "";
+  const equals = field.showWhen.equals;
+  return Array.isArray(equals) ? equals.includes(actual) : actual === equals;
+}
+
+/**
  * Validate a single field against its rubric definition. Returns an error
  * message or null. Mirrors the server-side Zod checks so users never burn an
  * API call on an incomplete submission.
@@ -191,6 +205,7 @@ export function StageForm({
   function validateAll(): Record<string, string> {
     const errs: Record<string, string> = {};
     for (const f of rubric.fields) {
+      if (!isFieldVisible(f, values)) continue;
       const e = validateField(f, values[f.key] ?? "");
       if (e) errs[f.key] = e;
     }
@@ -253,16 +268,19 @@ export function StageForm({
   return (
     <div className="space-y-7">
       <div className="space-y-6">
-        {rubric.fields.map((field) => (
-          <Field
-            key={field.key}
-            field={field}
-            value={values[field.key] ?? ""}
-            onChange={(v) => setVal(field.key, v)}
-            disabled={alreadyPassed && !feedback}
-            error={showErrors ? fieldErrors[field.key] : undefined}
-          />
-        ))}
+        {rubric.fields.map((field) => {
+          if (!isFieldVisible(field, values)) return null;
+          return (
+            <Field
+              key={field.key}
+              field={field}
+              value={values[field.key] ?? ""}
+              onChange={(v) => setVal(field.key, v)}
+              disabled={alreadyPassed && !feedback}
+              error={showErrors ? fieldErrors[field.key] : undefined}
+            />
+          );
+        })}
       </div>
 
       {belowFormNotice}

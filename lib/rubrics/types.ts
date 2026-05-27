@@ -58,6 +58,11 @@ export interface StageRubric<TInput> {
    * API route.
    */
   formatUserMessage(input: TInput, context?: { priorFeedback?: RubricResult }): string;
+  /**
+   * Optional reference question bank (e.g., Unusual Ventures' customer
+   * development questions). Surfaced to the user on the stage page.
+   */
+  referenceQuestions?: ReferenceQuestions;
 }
 
 export type StageFieldKind =
@@ -83,4 +88,27 @@ export interface StageField {
    * disclosure. Helps users calibrate without polluting the placeholder.
    */
   example?: string;
+  /**
+   * Conditionally show this field based on another field's value. The field
+   * is hidden (and skipped during validation) when the condition is not met.
+   * Use for branching stages — e.g. show consumer growth metrics only when
+   * `business_type === "consumer"`.
+   */
+  showWhen?: {
+    key: string;
+    equals: string | string[];
+  };
 }
+
+export interface ReferenceQuestionGroup {
+  category: string;
+  questions: string[];
+}
+
+/**
+ * Optional reference question bank surfaced on the stage page via a
+ * collapsible disclosure. The same questions are embedded in the rubric
+ * system prompt so the AI grader / coach see them too — this gives the
+ * user the canonical list to drive their own interviews.
+ */
+export type ReferenceQuestions = ReferenceQuestionGroup[];

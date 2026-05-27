@@ -1,5 +1,41 @@
 import { z } from "zod";
-import type { StageRubric } from "./types";
+import type { StageRubric, ReferenceQuestions } from "./types";
+
+const CONCEPT_TEST_QUESTIONS: ReferenceQuestions = [
+  {
+    category: "Lived the problem (Job-to-be-done)",
+    questions: [
+      "Can you talk me through the last time you faced ____ problem? (Walkthrough the job-to-be-done.)",
+      "What's the hardest part about solving this problem for you?",
+    ],
+  },
+  {
+    category: "Desperate / frequent / consequential",
+    questions: [
+      "How do you currently solve this problem? What's good and bad about that?",
+      "How often is this problem happening?",
+      "What's the impact (so what?) if you don't solve this? What's the worst consequence? (Listen for loss: time, money, frustration.)",
+      "Why would your boss care if this problem were solved? Why would the company care?",
+    ],
+  },
+  {
+    category: "Actively seeking solutions",
+    questions: [
+      "Have you tried using an external tool to solve this? Why or why not?",
+      "Have you ever paid for a solution? Why or why not?",
+      "Have you tried to build a solution yourself? How did that go?",
+      "If you could wave a magic wand, how would you solve this?",
+    ],
+  },
+  {
+    category: "Ideal outcome / next steps",
+    questions: [
+      "If you could solve this problem, what would it mean to you? What's the biggest value to you?",
+      "How would you measure success (KPIs)?",
+      "Is there anyone else you'd advise me to talk to who faces a similar challenge?",
+    ],
+  },
+];
 
 export const stage5Schema = z.object({
   method: z.enum(["concierge", "video", "smoke_test", "search_results", "kickstarter", "other"]),
@@ -126,6 +162,7 @@ Use these as a check on whether the user's evidence sounds like answers to the r
 Quote specifically from the user's prospect quotes when grading.
 
 You MUST call submit_rubric_result. passed=true only if every criterion is met. If the evidence sounds like sentiment ('they really liked it') without behavior, fail desperation_not_need.`,
+  referenceQuestions: CONCEPT_TEST_QUESTIONS,
   formatUserMessage(input, ctx) {
     let body = `# Stage 5 submission — Validate Problem / Concept
 

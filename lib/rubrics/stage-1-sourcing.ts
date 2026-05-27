@@ -2,10 +2,9 @@ import { z } from "zod";
 import type { StageRubric, RubricResult } from "./types";
 
 export const stage1Schema = z.object({
-  origin_story: z.string().min(80, "Tell the story — at least a paragraph."),
+  insight: z.string().min(40, "Aim for a concise, complete sentence — at least a line."),
   inflection_point: z.string().min(40),
   inflection_category: z.enum(["technological", "behavioral", "cultural", "regulatory"]),
-  insight: z.string().min(40),
   authenticity: z.string().min(40),
   prior_attempts: z.string().optional().default(""),
 });
@@ -16,18 +15,18 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
   stageNumber: 1,
   title: "Sourcing & Vetting",
   blurb:
-    "Great ideas find you — they don't come from brainstorming. Anchor your unique insight in a technological inflection.",
+    "Anchor a unique insight — something right AND non-consensus — in a technological inflection.",
   schema: stage1Schema,
   fields: [
     {
-      key: "origin_story",
-      label: "How did this idea find you?",
+      key: "insight",
+      label: "Your unique insight",
       helper:
-        "A unique insight is non-consensus by definition. Tell the unusual story — what were you doing, what did you notice, why couldn't you let it go?",
+        "Write a clear and concise statement of your unique insight. It must be both RIGHT and NON-CONSENSUS — something most people would not immediately agree with.",
       kind: "long_text",
-      rows: 6,
+      rows: 4,
       placeholder:
-        "I was working on X when I noticed Y... I kept seeing this pattern in...",
+        "In one or two sentences: what do you believe that most people don't?",
       required: true,
     },
     {
@@ -52,15 +51,6 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
         { value: "cultural", label: "Cultural (a shift in values/attitudes)" },
         { value: "regulatory", label: "Regulatory (a new rule or removed barrier)" },
       ],
-    },
-    {
-      key: "insight",
-      label: "The unique insight",
-      helper:
-        "What do you believe that most people don't? An idea everyone already agrees with isn't a unique insight — it's consensus.",
-      kind: "long_text",
-      rows: 4,
-      required: true,
     },
     {
       key: "authenticity",
@@ -91,7 +81,7 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
       id: "non_consensus",
       name: "Unique, non-consensus insight",
       description:
-        "The unique insight is something most people would *not* immediately agree with. Right + non-consensus is where outsized returns live.",
+        "The insight is stated clearly and concisely AND is non-consensus — something most people would not immediately agree with. Right + non-consensus is where outsized returns live.",
     },
     {
       id: "authenticity",
@@ -99,38 +89,28 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
       description:
         "There is a credible reason this founder, specifically, can see the technological inflection — lived experience, technical depth, cross-field connection.",
     },
-    {
-      id: "found_you",
-      name: "Idea found you (not brainstormed)",
-      description:
-        "The origin story shows the idea emerged from observation/practice, not from a 'let's come up with ideas' meeting.",
-    },
   ],
   systemPrompt: `You are the grader for Stage 1 (Sourcing & Vetting Ideas) of a Product/Market Fit journey app, applying canonical product/market fit standards.
 
 The bar to PASS this stage is high but specific. You grade strictly because the app refuses to advance the user until they meet the bar — your job is to push them to clarify or pivot, not to be nice.
 
 Key principles you enforce:
+- The unique insight must be CLEAR, CONCISE, and NON-CONSENSUS. "Right + non-consensus" is where outsized returns come from. If the insight is something a generic MBA would write down ("AI is transforming X", "remote work is here to stay"), it is consensus and fails. Vague or sprawling statements also fail — push for one to two crisp sentences.
 - Great tech companies start with a TECHNOLOGICAL INFLECTION that enables a new type of product. Technological inflections are far more durable than behavioral, cultural, or regulatory ones. Behavioral/cultural/regulatory inflections do NOT pass on their own.
-- The unique insight must be NON-CONSENSUS. "Right + non-consensus" is where outsized returns come from. If the unique insight is something a generic MBA would write down ("AI is transforming X"), it is consensus and fails.
 - AUTHENTICITY: there must be a credible reason this founder can see this technological inflection. Generic curiosity is not authenticity. Lived experience, deep technical familiarity, or cross-field expertise are.
-- Great ideas FIND YOU. If the origin story sounds like a brainstorming output or "I was looking for a startup idea", that's a fail signal.
 - "Solving your own problem" alone is a weaker form of authenticity — note it but do not auto-fail.
 
 For each criterion in the rubric, return whether it is met and a short explanation. Be concrete: quote phrases from the user's responses when explaining why something does or doesn't meet the bar.
 
-You MUST call the submit_rubric_result tool exactly once with the structured result. Set passed=true ONLY if every criterion is met. If even one is not met, passed=false and provide suggested_revisions with concrete next steps (e.g., "Reframe your inflection as the underlying technology, not the behavior it enables").`,
+You MUST call the submit_rubric_result tool exactly once with the structured result. Set passed=true ONLY if every criterion is met. If even one is not met, passed=false and provide suggested_revisions with concrete next steps (e.g., "Tighten your insight to one sentence and make sure it's something a thoughtful peer would push back on", "Reframe your inflection as the underlying technology, not the behavior it enables").`,
   formatUserMessage(input, ctx) {
     let body = `# Stage 1 submission — Sourcing & Vetting
 
-## Origin story
-${input.origin_story}
+## The unique insight
+${input.insight}
 
 ## Technological inflection (self-classified as: ${input.inflection_category})
 ${input.inflection_point}
-
-## The unique insight
-${input.insight}
 
 ## Why this founder
 ${input.authenticity}

@@ -98,7 +98,7 @@ export default async function StagePage({
         <StageStepper
           stages={allStages}
           currentStage={stageNumber}
-          hrefForStage={(n) => `/projects/${id}/stage/${n}`}
+          hrefBase={`/projects/${id}/stage`}
         />
       </div>
 

@@ -116,7 +116,7 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
           <StageStepper
             stages={allStages}
             currentStage={stageNumber}
-            hrefForStage={(n) => `/try/stage/${n}`}
+            hrefBase="/try/stage"
           />
         </div>
       )}

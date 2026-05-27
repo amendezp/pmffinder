@@ -6,7 +6,12 @@ import { rubrics } from "@/lib/rubrics";
 interface StageStepperProps {
   stages: Array<{ stage_number: number; status: "locked" | "in_progress" | "passed" }>;
   currentStage?: number;
-  hrefForStage?: (n: number) => string;
+  /**
+   * Base path; each stage links to `${hrefBase}/${stageNumber}`. Use a string
+   * so this prop can be passed from Server Components (functions can't cross
+   * the boundary).
+   */
+  hrefBase?: string;
 }
 
 /**
@@ -17,7 +22,7 @@ interface StageStepperProps {
 export function StageStepper({
   stages,
   currentStage,
-  hrefForStage,
+  hrefBase,
 }: StageStepperProps) {
   const statusByStage = new Map<number, "locked" | "in_progress" | "passed">(
     stages.map((s) => [s.stage_number, s.status])
@@ -61,7 +66,7 @@ export function StageStepper({
             </div>
           );
 
-          const href = hrefForStage ? hrefForStage(n) : null;
+          const href = hrefBase ? `${hrefBase}/${n}` : null;
 
           return (
             <li

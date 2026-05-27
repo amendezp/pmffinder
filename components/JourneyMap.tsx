@@ -5,10 +5,13 @@ import { motion } from "framer-motion";
 import { rubrics } from "@/lib/rubrics";
 
 interface JourneyMapProps {
-  projectId: string;
   stages: Array<{ stage_number: number; status: "locked" | "in_progress" | "passed" }>;
-  /** Defaults to `/projects/{projectId}/stage/{n}`. */
-  hrefForStage?: (n: number) => string;
+  /**
+   * Base path; each row links to `${hrefBase}/${stageNumber}`. Use a string
+   * so this prop can be passed from Server Components (functions can't cross
+   * the boundary).
+   */
+  hrefBase: string;
 }
 
 const STATUS_TEXT: Record<"locked" | "in_progress" | "passed", string> = {
@@ -17,9 +20,8 @@ const STATUS_TEXT: Record<"locked" | "in_progress" | "passed", string> = {
   passed: "Passed",
 };
 
-export function JourneyMap({ projectId, stages, hrefForStage }: JourneyMapProps) {
-  const buildHref =
-    hrefForStage ?? ((n: number) => `/projects/${projectId}/stage/${n}`);
+export function JourneyMap({ stages, hrefBase }: JourneyMapProps) {
+  const buildHref = (n: number) => `${hrefBase}/${n}`;
   const statusByStage = new Map<number, "locked" | "in_progress" | "passed">(
     stages.map((s) => [s.stage_number, s.status])
   );

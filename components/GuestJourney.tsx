@@ -53,7 +53,7 @@ export function GuestJourney() {
           <StageStepper
             stages={stagesArr}
             currentStage={active}
-            hrefForStage={(n) => `/try/stage/${n}`}
+            hrefBase="/try/stage"
           />
         </div>
       )}
@@ -64,11 +64,7 @@ export function GuestJourney() {
             <span>The 9 stages</span>
             <div className="h-px flex-1 bg-neon-cyan/20" />
           </h2>
-          <JourneyMap
-            projectId="try"
-            stages={stagesArr}
-            hrefForStage={(n) => `/try/stage/${n}`}
-          />
+          <JourneyMap stages={stagesArr} hrefBase="/try/stage" />
 
           {allPassed && (
             <div className="mt-8 border-l border-neon-cyan bg-gradient-to-r from-neon-cyan/10 to-transparent px-5 py-4 shadow-cyber-glow">

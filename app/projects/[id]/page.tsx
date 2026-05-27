@@ -94,7 +94,7 @@ export default async function ProjectPage({
           <StageStepper
             stages={stages}
             currentStage={active}
-            hrefForStage={(n) => `/projects/${id}/stage/${n}`}
+            hrefBase={`/projects/${id}/stage`}
           />
         </div>
 
@@ -104,7 +104,7 @@ export default async function ProjectPage({
               <span>The 9 stages</span>
               <div className="h-px flex-1 bg-neon-cyan/20" />
             </h2>
-            <JourneyMap projectId={project.id} stages={stages} />
+            <JourneyMap stages={stages} hrefBase={`/projects/${id}/stage`} />
           </section>
 
           <aside

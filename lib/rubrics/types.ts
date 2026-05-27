@@ -70,8 +70,8 @@ export interface StageField {
   label: string;
   helper?: string;
   kind: StageFieldKind;
-  /** For select / radio. */
-  options?: Array<{ value: string; label: string }>;
+  /** For select / radio. `notice` renders below the field when that option is selected. */
+  options?: Array<{ value: string; label: string; notice?: string }>;
   placeholder?: string;
   required?: boolean;
   minLength?: number;

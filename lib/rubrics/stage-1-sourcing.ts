@@ -30,27 +30,45 @@ export const stage1Rubric: StageRubric<Stage1Input> = {
       required: true,
     },
     {
-      key: "inflection_point",
-      label: "The technological inflection",
-      helper:
-        "What changed in technology that makes this possible *now*? Behavioral, cultural, and regulatory shifts don't count — the bar here is a real technological inflection.",
-      kind: "long_text",
-      rows: 4,
-      required: true,
-    },
-    {
       key: "inflection_category",
-      label: "Confirm: is this inflection actually technological?",
+      label: "What type of inflection is your idea built on?",
       helper:
-        "Technological inflections are far more durable than behavioral, cultural, or regulatory ones. If you check anything other than technological, this stage will not pass.",
+        "Pick the closest match honestly — be specific about what you're seeing. Only technological inflections pass this stage: they're far more durable than behavioral, cultural, or regulatory shifts.",
       kind: "radio",
       required: true,
       options: [
-        { value: "technological", label: "Technological (e.g., new model capability, new HW class)" },
-        { value: "behavioral", label: "Behavioral (a shift in what people do)" },
-        { value: "cultural", label: "Cultural (a shift in values/attitudes)" },
-        { value: "regulatory", label: "Regulatory (a new rule or removed barrier)" },
+        {
+          value: "technological",
+          label: "Technological (e.g., new model capability, new HW class)",
+        },
+        {
+          value: "behavioral",
+          label: "Behavioral (a shift in what people do)",
+          notice:
+            "Behavioral shifts fade. Look harder — is there a *technology* enabling this behavior? Anchor the inflection there.",
+        },
+        {
+          value: "cultural",
+          label: "Cultural (a shift in values/attitudes)",
+          notice:
+            "Cultural shifts are unreliable and rarely durable enough for a tech company. Find the underlying technology, if any.",
+        },
+        {
+          value: "regulatory",
+          label: "Regulatory (a new rule or removed barrier)",
+          notice:
+            "Regulation can flip back. The bar here is technology — what new technical capability does the regulation unlock for you?",
+        },
       ],
+    },
+    {
+      key: "inflection_point",
+      label: "Describe the inflection",
+      helper:
+        "What specifically changed that makes this possible *now*? Name the technology, capability, or shift — be concrete.",
+      kind: "long_text",
+      rows: 4,
+      required: true,
     },
     {
       key: "authenticity",

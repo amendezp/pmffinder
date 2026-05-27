@@ -90,6 +90,14 @@ function Field({
               <span className="text-sm text-ink-800">{opt.label}</span>
             </label>
           ))}
+          {(() => {
+            const selected = field.options?.find((o) => o.value === value);
+            return selected?.notice ? (
+              <p className="rounded-md border-l-2 border-compass-rose bg-parchment-100/80 px-3 py-2 text-sm text-ink-800">
+                {selected.notice}
+              </p>
+            ) : null;
+          })()}
         </div>
       )}
       {field.kind === "select" && (

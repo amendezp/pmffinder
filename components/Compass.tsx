@@ -32,6 +32,41 @@ const COLORS = {
   accent: "#7F8C8D",
 };
 
+/**
+ * SVG-native rotating <g>. animateTransform is supported in every modern
+ * browser and avoids the CSS transform-origin quirks of SMIL+SVG hybrids.
+ */
+function SpinG({
+  cx,
+  cy,
+  duration,
+  reverse = false,
+  children,
+}: {
+  cx: number;
+  cy: number;
+  duration: number;
+  reverse?: boolean;
+  children: React.ReactNode;
+}) {
+  const from = reverse ? `360 ${cx} ${cy}` : `0 ${cx} ${cy}`;
+  const to = reverse ? `0 ${cx} ${cy}` : `360 ${cx} ${cy}`;
+  return (
+    <g>
+      <animateTransform
+        attributeName="transform"
+        attributeType="XML"
+        type="rotate"
+        from={from}
+        to={to}
+        dur={`${duration}s`}
+        repeatCount="indefinite"
+      />
+      {children}
+    </g>
+  );
+}
+
 export function Compass({
   activeStage,
   passedStages = new Set(),
@@ -41,7 +76,7 @@ export function Compass({
 }: CompassProps) {
   const cx = size / 2;
   const cy = size / 2;
-  const ringR = size * 0.36; // ring waypoints sit on
+  const ringR = size * 0.36;
   const outerR = size * 0.46;
   const farR = size * 0.48;
   const waypointR = size * 0.018;
@@ -63,6 +98,14 @@ export function Compass({
   const needleAngle = ((activeStage - 1) / 7) * 360;
   const needleLength = ringR - waypointR - size * 0.005;
 
+  // Sweep beam — a thin wedge that rotates slowly around the dial.
+  const wedgeAngle = (Math.PI * 2) / 20; // ~18°
+  const wedgeTip = {
+    x: cx + outerR * Math.sin(wedgeAngle),
+    y: cy - outerR * Math.cos(wedgeAngle),
+  };
+  const sweepPath = `M ${cx} ${cy} L ${cx} ${cy - outerR} A ${outerR} ${outerR} 0 0 1 ${wedgeTip.x} ${wedgeTip.y} Z`;
+
   return (
     <div className="relative inline-block" style={{ width: size, height: size }}>
       <svg
@@ -81,11 +124,8 @@ export function Compass({
           fill="none"
         />
 
-        {/* Far dashed sweep — slowly counter-rotates */}
-        <g
-          className="origin-center animate-spin-reverse-slow"
-          style={{ transformOrigin: `${cx}px ${cy}px` }}
-        >
+        {/* Far dashed sweep — counter-rotates */}
+        <SpinG cx={cx} cy={cy} duration={25} reverse>
           <circle
             cx={cx}
             cy={cy}
@@ -96,7 +136,15 @@ export function Compass({
             strokeDasharray="1 14"
             fill="none"
           />
-        </g>
+          {/* Two markers traveling on the far ring */}
+          <circle cx={cx} cy={cy - (farR - 2)} r={2} fill={COLORS.accent} />
+          <circle
+            cx={cx + (farR - 2) * Math.sin((Math.PI * 2 * 4.3) / 7)}
+            cy={cy - (farR - 2) * Math.cos((Math.PI * 2 * 4.3) / 7)}
+            r={1.5}
+            fill={COLORS.accent}
+          />
+        </SpinG>
 
         {/* Crosshair */}
         <g stroke={COLORS.line} strokeWidth={0.5}>
@@ -114,11 +162,13 @@ export function Compass({
           fill="none"
         />
 
-        {/* Dashed mid-ring slowly rotates */}
-        <g
-          className="origin-center animate-spin-medium"
-          style={{ transformOrigin: `${cx}px ${cy}px` }}
-        >
+        {/* Sweep beam — slow rotation */}
+        <SpinG cx={cx} cy={cy} duration={28}>
+          <path d={sweepPath} fill={COLORS.light} fillOpacity={0.09} />
+        </SpinG>
+
+        {/* Dashed mid-ring rotates */}
+        <SpinG cx={cx} cy={cy} duration={18}>
           <circle
             cx={cx}
             cy={cy}
@@ -129,19 +179,9 @@ export function Compass({
             strokeDasharray="2 16"
             fill="none"
           />
-        </g>
+        </SpinG>
 
-        {/* Faint sweep beam — a barely-visible pie slice rotating */}
-        <motion.path
-          d={`M ${cx} ${cy} L ${cx} ${cy - outerR} A ${outerR} ${outerR} 0 0 1 ${cx + outerR * Math.sin((Math.PI * 2) / 36)} ${cy - outerR * Math.cos((Math.PI * 2) / 36)} Z`}
-          fill={COLORS.light}
-          fillOpacity={0.08}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: `${cx}px ${cy}px` }}
-        />
-
-        {/* Tick marks — sparse, only every 30° */}
+        {/* Tick marks every 30° */}
         {Array.from({ length: 12 }).map((_, i) => {
           const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
           const inner = farR - 4;
@@ -169,10 +209,7 @@ export function Compass({
           strokeWidth={0.5}
           fill="none"
         />
-        <g
-          className="origin-center animate-spin-fast"
-          style={{ transformOrigin: `${cx}px ${cy}px` }}
-        >
+        <SpinG cx={cx} cy={cy} duration={12}>
           <circle
             cx={cx}
             cy={cy}
@@ -182,14 +219,14 @@ export function Compass({
             strokeDasharray="2 6"
             fill="none"
           />
-        </g>
+        </SpinG>
 
-        {/* Needle */}
+        {/* Needle — framer-motion handles the spring on stage change */}
         <motion.g
           initial={false}
           animate={{ rotate: needleAngle }}
           transition={{ type: "spring", stiffness: 50, damping: 14 }}
-          style={{ transformOrigin: `${cx}px ${cy}px` }}
+          style={{ originX: `${cx}px`, originY: `${cy}px` }}
         >
           <line
             x1={cx}
@@ -220,16 +257,29 @@ export function Compass({
               onClick={() => onStageClick?.(w.stage)}
             >
               {isActive && (
-                <motion.circle
-                  cx={w.x}
-                  cy={w.y}
-                  r={waypointR * 3.2}
-                  fill={COLORS.text}
-                  opacity={0.06}
-                  animate={{ scale: [1, 1.3, 1] }}
-                  transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut" }}
-                  style={{ transformOrigin: `${w.x}px ${w.y}px` }}
-                />
+                <>
+                  {/* Pulse halo via SMIL — works without framer's CSS handling */}
+                  <circle
+                    cx={w.x}
+                    cy={w.y}
+                    r={waypointR * 3.2}
+                    fill={COLORS.text}
+                    opacity={0.08}
+                  >
+                    <animate
+                      attributeName="r"
+                      values={`${waypointR * 2.4};${waypointR * 4};${waypointR * 2.4}`}
+                      dur="3.2s"
+                      repeatCount="indefinite"
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0.12;0.04;0.12"
+                      dur="3.2s"
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                </>
               )}
               <circle
                 cx={w.x}
@@ -240,26 +290,24 @@ export function Compass({
                 strokeWidth={0.8}
               />
               {!decorative && (
-                <>
-                  <text
-                    x={w.labelX}
-                    y={w.labelY}
-                    textAnchor={
-                      Math.abs(Math.cos(w.angle)) < 0.2
-                        ? "middle"
-                        : Math.cos(w.angle) > 0
-                          ? "start"
-                          : "end"
-                    }
-                    dominantBaseline="middle"
-                    fontSize={Math.max(9, size * 0.022)}
-                    fill={isActive ? COLORS.text : COLORS.light}
-                    fontFamily='"Inter", sans-serif'
-                    style={{ letterSpacing: "0.15em" }}
-                  >
-                    {`0${w.stage}`.slice(-2)} · {w.label.toUpperCase()}
-                  </text>
-                </>
+                <text
+                  x={w.labelX}
+                  y={w.labelY}
+                  textAnchor={
+                    Math.abs(Math.cos(w.angle)) < 0.2
+                      ? "middle"
+                      : Math.cos(w.angle) > 0
+                        ? "start"
+                        : "end"
+                  }
+                  dominantBaseline="middle"
+                  fontSize={Math.max(9, size * 0.022)}
+                  fill={isActive ? COLORS.text : COLORS.light}
+                  fontFamily='"Inter", sans-serif'
+                  style={{ letterSpacing: "0.15em" }}
+                >
+                  {`0${w.stage}`.slice(-2)} · {w.label.toUpperCase()}
+                </text>
               )}
             </g>
           );

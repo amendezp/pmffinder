@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #fbf7ee;
+  --foreground: #221b10;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #15110a;
+    --foreground: #f4ecd6;
+  }
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+}
+
+body {
+  background-image:
+    radial-gradient(at 20% 10%, rgba(199, 155, 70, 0.12), transparent 50%),
+    radial-gradient(at 80% 90%, rgba(138, 51, 36, 0.10), transparent 50%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.font-display {
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  letter-spacing: 0.02em;
+}
+
+/* Aged paper for the memo */
+.memo-page {
+  background:
+    radial-gradient(ellipse at 10% 10%, rgba(184, 138, 70, 0.15), transparent 60%),
+    radial-gradient(ellipse at 90% 90%, rgba(138, 51, 36, 0.12), transparent 60%),
+    #fbf7ee;
+  color: #15110a;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 1.2cm;
+  }
+  body {
+    background: white !important;
+    background-image: none !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .memo-page {
+    background: white !important;
+  }
+}

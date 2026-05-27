@@ -19,7 +19,6 @@ async function createProject(formData: FormData) {
     .single();
   if (error || !data) throw new Error(error?.message ?? "Failed to create project");
 
-  // Seed the first stage as in_progress so the journey starts unlocked.
   await supabase.from("stages").insert({
     project_id: data.id,
     stage_number: 1,
@@ -31,32 +30,44 @@ async function createProject(formData: FormData) {
 
 export default function NewProjectPage() {
   return (
-    <main className="mx-auto max-w-xl px-6 py-12">
-      <Link href="/projects" className="text-sm text-ink-700 underline-offset-4 hover:underline">
-        ← Back to projects
-      </Link>
-      <h1 className="mt-4 font-display text-3xl text-ink-900">Start a new journey</h1>
-      <p className="mt-1 text-sm text-ink-700/85">
-        Give your idea a name. You can rename it later. Each journey runs through all
-        seven stages.
+    <main className="relative mx-auto max-w-2xl px-8 py-12 md:px-12">
+      <header className="mb-12 flex items-center gap-4 text-[10px] uppercase tracking-widest text-zen-light">
+        <Link href="/projects" className="hover:text-zen-text">
+          ← Back to projects
+        </Link>
+        <div className="h-px w-8 bg-zen-line" />
+        <span>New Journey</span>
+      </header>
+
+      <div className="mb-2 text-[11px] uppercase tracking-widest text-zen-light">
+        Begin
+      </div>
+      <h1 className="mb-3 font-serif text-5xl font-light tracking-wide text-zen-text">
+        Start a new journey
+      </h1>
+      <p className="mb-10 text-base font-light leading-relaxed text-zen-accent">
+        Give your idea a name. You can rename it later. Each journey runs through
+        all seven stages.
       </p>
 
-      <form action={createProject} className="mt-6 space-y-3">
-        <label className="block">
-          <span className="block font-serif text-base text-ink-900">Project name</span>
+      <form action={createProject} className="space-y-6">
+        <div>
+          <label className="block text-[10px] uppercase tracking-widest text-zen-light">
+            Project name
+          </label>
           <input
             name="name"
             required
             maxLength={120}
-            className="mt-1 w-full rounded-md border border-ink-700/25 bg-parchment-50 px-3 py-2 text-ink-900 focus:border-compass-rose focus:outline-none"
-            placeholder="e.g., InsightForge — for technical PM founders"
+            className="mt-2 w-full border-b border-zen-line bg-transparent px-1 py-2 font-serif text-2xl text-zen-text placeholder:text-zen-light focus:border-zen-text focus:outline-none"
+            placeholder="e.g., InsightForge"
           />
-        </label>
+        </div>
         <button
           type="submit"
-          className="rounded-md bg-compass-rose px-5 py-2.5 font-serif text-parchment-50 shadow-compass hover:bg-compass-rose/90"
+          className="rounded-sm border border-zen-text bg-zen-text px-6 py-3 text-xs uppercase tracking-widest text-zen-bg hover:bg-zen-deep"
         >
-          Begin the journey
+          Begin the journey →
         </button>
       </form>
     </main>

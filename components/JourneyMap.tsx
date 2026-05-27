@@ -11,6 +11,12 @@ interface JourneyMapProps {
   hrefForStage?: (n: number) => string;
 }
 
+const statusLabel: Record<"locked" | "in_progress" | "passed", string> = {
+  locked: "LOCKED",
+  in_progress: "OPEN",
+  passed: "PASSED",
+};
+
 export function JourneyMap({ projectId, stages, hrefForStage }: JourneyMapProps) {
   const buildHref =
     hrefForStage ?? ((n: number) => `/projects/${projectId}/stage/${n}`);
@@ -18,7 +24,6 @@ export function JourneyMap({ projectId, stages, hrefForStage }: JourneyMapProps)
     stages.map((s) => [s.stage_number, s.status])
   );
 
-  // First locked stage = the one to unlock next; everything before is open.
   let firstLocked = 8;
   for (let i = 1; i <= 7; i++) {
     const status = statusByStage.get(i) ?? (i === 1 ? "in_progress" : "locked");
@@ -29,7 +34,7 @@ export function JourneyMap({ projectId, stages, hrefForStage }: JourneyMapProps)
   }
 
   return (
-    <ol className="space-y-3">
+    <ol className="flex flex-col">
       {Array.from({ length: 7 }).map((_, idx) => {
         const n = idx + 1;
         const status =
@@ -41,36 +46,38 @@ export function JourneyMap({ projectId, stages, hrefForStage }: JourneyMapProps)
 
         const body = (
           <motion.div
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: idx * 0.06 }}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05 }}
             className={[
-              "flex items-center gap-4 rounded-lg border px-4 py-3 transition",
-              isPassed
-                ? "border-brass-500/50 bg-parchment-100/60"
-                : isLocked
-                  ? "border-ink-700/15 bg-parchment-50/40 opacity-60"
-                  : "border-compass-rose/40 bg-parchment-100/80 shadow-compass",
+              "group relative flex items-baseline justify-between gap-4 border-b py-4 transition-colors duration-500",
+              isLocked
+                ? "border-zen-line/40 opacity-50"
+                : "border-zen-line/60 hover:border-zen-text/40",
             ].join(" ")}
           >
+            <div className="flex items-baseline gap-5">
+              <span className="font-mono text-[10px] uppercase tracking-widest text-zen-light">
+                {`0${n}`.slice(-2)}
+              </span>
+              <div>
+                <h3 className="font-serif text-xl text-zen-text leading-tight">
+                  {rubric.title}
+                </h3>
+                <p className="mt-0.5 text-xs text-zen-light">{rubric.blurb}</p>
+              </div>
+            </div>
             <span
               className={[
-                "flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-serif text-base",
+                "shrink-0 text-[10px] tracking-widest uppercase",
                 isPassed
-                  ? "bg-brass-500 text-parchment-50"
+                  ? "text-zen-text"
                   : isLocked
-                    ? "bg-parchment-200 text-ink-700/60"
-                    : "bg-compass-rose text-parchment-50",
+                    ? "text-zen-light/60"
+                    : "text-zen-accent",
               ].join(" ")}
             >
-              {isPassed ? "✓" : n}
-            </span>
-            <div className="flex-1">
-              <div className="font-serif text-lg text-ink-900">{rubric.title}</div>
-              <div className="text-sm text-ink-700/80">{rubric.blurb}</div>
-            </div>
-            <span className="text-xs uppercase tracking-wider text-ink-700/70">
-              {isPassed ? "passed" : isLocked ? "locked" : "open"}
+              {statusLabel[status]}
             </span>
           </motion.div>
         );
@@ -78,9 +85,13 @@ export function JourneyMap({ projectId, stages, hrefForStage }: JourneyMapProps)
         return (
           <li key={n}>
             {isLocked ? (
-              <div aria-disabled>{body}</div>
+              <div aria-disabled className="cursor-not-allowed">
+                {body}
+              </div>
             ) : (
-              <Link href={buildHref(n)}>{body}</Link>
+              <Link href={buildHref(n)} className="block">
+                {body}
+              </Link>
             )}
           </li>
         );

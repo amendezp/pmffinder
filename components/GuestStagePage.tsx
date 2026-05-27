@@ -93,21 +93,21 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
   }
 
   return (
-    <main className="relative mx-auto max-w-5xl px-6 py-10">
-      <header className="mb-6">
-        <Link
-          href="/try"
-          className="text-xs text-ink-700/80 underline-offset-4 hover:underline"
-        >
-          ← Back to journey
-        </Link>
-        <div className="mt-1 flex items-baseline gap-3">
-          <span className="rounded-full bg-compass-rose px-3 py-0.5 font-serif text-sm text-parchment-50">
-            Stage {stageNumber}
-          </span>
-          <h1 className="font-display text-3xl text-ink-900">{rubric.title}</h1>
+    <main className="relative mx-auto max-w-5xl px-6 py-10 md:px-12">
+      <header className="mb-10">
+        <div className="mb-3 flex items-center gap-4 text-[10px] uppercase tracking-widest text-zen-light">
+          <Link href="/try" className="hover:text-zen-text">
+            ← Back to journey
+          </Link>
+          <div className="h-px w-8 bg-zen-line" />
+          <span>Stage {`0${stageNumber}`.slice(-2)} / 07 · Demo</span>
         </div>
-        <p className="mt-2 max-w-2xl text-ink-700">{rubric.blurb}</p>
+        <h1 className="font-serif text-4xl font-light tracking-wide text-zen-text md:text-5xl">
+          {rubric.title}
+        </h1>
+        <p className="mt-2 max-w-2xl text-base font-light leading-relaxed text-zen-accent">
+          {rubric.blurb}
+        </p>
       </header>
 
       <div className="mb-6">

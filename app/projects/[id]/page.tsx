@@ -32,7 +32,6 @@ export default async function ProjectPage({
     status: "locked" | "in_progress" | "passed";
   }>;
 
-  // Active = first non-passed stage that isn't locked; default 1.
   let active = 1;
   const statusMap = new Map(stages.map((s) => [s.stage_number, s.status]));
   for (let i = 1; i <= 7; i++) {
@@ -49,7 +48,6 @@ export default async function ProjectPage({
 
   const allPassed = passedStages.size === 7;
 
-  // Latest memo (if any).
   const { data: memo } = await supabase
     .from("memos")
     .select("id, generated_at")
@@ -59,39 +57,67 @@ export default async function ProjectPage({
     .maybeSingle();
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10">
-      <header className="mb-8 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <Link
-            href="/projects"
-            className="text-xs text-ink-700/80 underline-offset-4 hover:underline"
-          >
-            ← All projects
-          </Link>
-          <h1 className="mt-1 font-display text-3xl text-ink-900">{project.name}</h1>
+    <main className="relative min-h-screen w-full overflow-hidden">
+      <div className="absolute right-8 top-8 z-30 text-right text-[10px] uppercase tracking-widest text-zen-light no-print">
+        <div className="mb-1">System // Analysis</div>
+        <div className="text-zen-text">
+          {passedStages.size} / 7 · Stage {active}
         </div>
-        <div className="flex items-center gap-3">
+      </div>
+
+      <section className="relative z-10 mx-auto max-w-7xl px-8 py-12 md:px-16 md:pl-24">
+        <header className="mb-12 flex items-center gap-4 text-[10px] uppercase tracking-widest text-zen-light">
+          <Link href="/projects" className="hover:text-zen-text">
+            ← All Projects
+          </Link>
+          <div className="h-px w-8 bg-zen-line" />
+          <span>Project // Active</span>
+        </header>
+
+        <div className="mb-12 max-w-2xl fade-in-up">
+          <h2 className="mb-3 text-[11px] uppercase tracking-widest text-zen-light">
+            Current Journey
+          </h2>
+          <h1 className="font-serif text-5xl font-light leading-tight tracking-wide text-zen-text md:text-6xl">
+            {project.name}
+          </h1>
           {allPassed && (
-            <Link
-              href={`/projects/${project.id}/memo`}
-              className="rounded-md bg-brass-500 px-4 py-2 text-sm font-serif text-parchment-50 shadow-compass hover:bg-brass-500/90"
-            >
-              {memo ? "Open memo →" : "Generate memo →"}
-            </Link>
+            <div className="mt-6">
+              <Link
+                href={`/projects/${project.id}/memo`}
+                className="inline-block rounded-sm border border-zen-text bg-zen-text px-5 py-2.5 text-xs uppercase tracking-widest text-zen-bg transition hover:bg-zen-deep"
+              >
+                {memo ? "Open memo →" : "Generate memo →"}
+              </Link>
+            </div>
           )}
         </div>
-      </header>
 
-      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)]">
-        <section>
-          <h2 className="mb-3 font-serif text-xl text-ink-900">The journey</h2>
-          <JourneyMap projectId={project.id} stages={stages} />
-        </section>
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)]">
+          <section
+            className="fade-in-up"
+            style={{ animationDelay: "0.05s" }}
+          >
+            <h2 className="mb-6 flex items-center gap-3 text-[11px] uppercase tracking-widest text-zen-light">
+              <span>The Waypoints</span>
+              <div className="h-px flex-1 bg-zen-line" />
+            </h2>
+            <JourneyMap projectId={project.id} stages={stages} />
+          </section>
 
-        <aside className="flex justify-center lg:sticky lg:top-8">
-          <Compass activeStage={active} passedStages={passedStages} />
-        </aside>
-      </div>
+          <aside
+            className="flex justify-center lg:sticky lg:top-8 fade-in-up"
+            style={{ animationDelay: "0.1s" }}
+          >
+            <Compass
+              activeStage={active}
+              passedStages={passedStages}
+              size={440}
+              decorative
+            />
+          </aside>
+        </div>
+      </section>
     </main>
   );
 }

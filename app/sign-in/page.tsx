@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignInPage() {
@@ -27,38 +28,58 @@ export default function SignInPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <div className="w-full max-w-md rounded-lg border border-ink-700/20 bg-parchment-50/95 p-8 shadow-compass">
-        <h1 className="mb-1 font-display text-2xl text-ink-900">Sign in</h1>
-        <p className="mb-6 text-sm text-ink-700/85">
-          A magic link will be sent to your email. No password.
+    <main className="relative flex min-h-screen items-center justify-center px-6">
+      <div className="absolute right-8 top-8 text-right text-[10px] uppercase tracking-widest text-zen-light no-print">
+        <div className="mb-1">System // Auth</div>
+        <Link href="/" className="text-zen-text hover:underline">
+          ← PMFinder
+        </Link>
+      </div>
+
+      <div className="relative z-10 w-full max-w-md">
+        <div className="mb-6 flex items-center gap-3 text-[10px] uppercase tracking-widest text-zen-light">
+          <span>Identify yourself</span>
+          <div className="h-px flex-1 bg-zen-line" />
+        </div>
+        <h1 className="mb-2 font-serif text-4xl font-light tracking-wide text-zen-text">
+          Sign in
+        </h1>
+        <p className="mb-8 text-sm text-zen-accent">
+          A magic link will be sent to your email. No password required.
         </p>
-        <form onSubmit={send} className="space-y-3">
+
+        <form onSubmit={send} className="space-y-4">
           <input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="w-full rounded-md border border-ink-700/25 bg-parchment-50 px-3 py-2 text-ink-900 focus:border-compass-rose focus:outline-none"
+            className="w-full border-b border-zen-line bg-transparent px-1 py-2 text-zen-text placeholder:text-zen-light focus:border-zen-text focus:outline-none"
           />
           <button
             type="submit"
             disabled={status === "sending"}
-            className="w-full rounded-md bg-compass-rose py-2.5 font-serif text-parchment-50 shadow-compass transition hover:bg-compass-rose/90 disabled:opacity-60"
+            className="w-full rounded-sm border border-zen-text bg-zen-text py-3 text-xs uppercase tracking-widest text-zen-bg transition hover:bg-zen-deep disabled:opacity-60"
           >
             {status === "sending" ? "Sending…" : "Send magic link"}
           </button>
         </form>
 
         {status === "sent" && (
-          <p className="mt-4 rounded-md border border-brass-500/30 bg-parchment-100 px-3 py-2 text-sm text-ink-800">
+          <p className="mt-6 border-l-2 border-zen-text bg-white px-3 py-2 text-sm text-zen-text">
             Check your inbox. Click the link to sign in.
           </p>
         )}
         {status === "error" && error && (
-          <p className="mt-4 text-sm text-compass-rose">{error}</p>
+          <p className="mt-6 text-sm text-zen-text">{error}</p>
         )}
+
+        <div className="mt-10 text-[10px] uppercase tracking-widest text-zen-light">
+          <Link href="/try" className="hover:text-zen-text">
+            Or try the demo without signing in →
+          </Link>
+        </div>
       </div>
     </main>
   );

@@ -5,75 +5,107 @@ import { getCurrentUser } from "@/lib/supabase/server";
 export default async function Landing() {
   const user = await getCurrentUser().catch(() => null);
   return (
-    <main className="min-h-screen">
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <header className="flex items-center justify-between">
-          <h1 className="font-display text-2xl text-ink-900">PMFinder</h1>
-          <nav className="flex items-center gap-4 text-sm">
-            {user ? (
-              <Link className="text-ink-800 underline-offset-4 hover:underline" href="/projects">
-                Your projects →
-              </Link>
-            ) : (
-              <Link className="text-ink-800 underline-offset-4 hover:underline" href="/sign-in">
-                Sign in
-              </Link>
-            )}
-          </nav>
-        </header>
-
-        <section className="mt-12 grid items-center gap-12 md:grid-cols-2">
-          <div>
-            <h2 className="font-display text-5xl leading-tight text-ink-900">
-              A compass<br />
-              toward product/market fit.
-            </h2>
-            <p className="mt-5 text-lg text-ink-700">
-              A guided journey that gates your progress through the scientific
-              PMF process — sourcing, hypothesis, validation, metrics, surprise,
-              decision — until you've genuinely earned each waypoint. Then
-              exports a Sequoia-style 2-pager.
-            </p>
-            <ul className="mt-6 space-y-2 text-ink-800">
-              <li>· Seven stages, each gated by an LLM grader trained on the rubric.</li>
-              <li>· Per-stage evidence — upload screenshots, paste transcripts.</li>
-              <li>· Socratic coach to pressure-test your draft before submitting.</li>
-              <li>· Shareable, printable memo when you cross the finish line.</li>
-            </ul>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href={user ? "/projects" : "/try"}
-                className="rounded-md bg-compass-rose px-6 py-3 font-serif text-parchment-50 shadow-compass transition hover:bg-compass-rose/90"
-              >
-                {user ? "Open your projects" : "Try the journey →"}
-              </Link>
-              {!user && (
-                <Link
-                  href="/sign-in"
-                  className="rounded-md border border-ink-700/30 bg-parchment-50 px-6 py-3 font-serif text-ink-800 transition hover:bg-parchment-100"
-                >
-                  Sign in to save
-                </Link>
-              )}
-            </div>
-            {!user && (
-              <p className="mt-3 text-xs text-ink-700/70">
-                No account required to demo. Sign in to save progress, upload evidence,
-                and export your memo.
-              </p>
-            )}
-          </div>
-
-          <div className="flex justify-center">
-            <Compass activeStage={1} size={420} />
-          </div>
-        </section>
-
-        <footer className="mt-20 border-t border-ink-700/15 pt-6 text-xs text-ink-700/70">
-          "When a great team meets a lousy market, market wins. When a great team
-          meets a great market — something special happens."
-        </footer>
+    <main className="relative min-h-screen w-full overflow-hidden">
+      {/* Off-canvas decorative compass — large, faint, anchored right */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-[-22%] top-1/2 z-0 hidden -translate-y-1/2 opacity-50 mix-blend-multiply lg:block"
+      >
+        <Compass activeStage={1} size={900} decorative />
       </div>
+
+      {/* HUD */}
+      <div className="absolute right-8 top-8 z-30 text-right text-[10px] uppercase tracking-widest text-zen-light no-print">
+        <div className="mb-1">System // Compass</div>
+        <div className="text-zen-text">PMF · 07 stages</div>
+      </div>
+
+      <div className="absolute bottom-8 left-8 z-30 flex items-center gap-3 text-[10px] uppercase tracking-widest text-zen-light no-print md:left-24">
+        <span className="inline-block h-1.5 w-1.5 rounded-full bg-zen-accent" />
+        Active
+      </div>
+
+      <section className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-8 py-16 md:px-16 md:pl-24">
+        <div className="mb-8 flex items-center gap-4 text-[10px] uppercase tracking-widest text-zen-light fade-in-up">
+          <span>PMFinder</span>
+          <div className="h-px w-8 bg-zen-line" />
+          <span>A guided journey toward PMF</span>
+        </div>
+
+        <div className="mb-12 max-w-xl fade-in-up" style={{ animationDelay: "0.05s" }}>
+          <h2 className="mb-4 text-[11px] uppercase tracking-widest text-zen-light">
+            Current State
+          </h2>
+          <h1 className="font-serif text-6xl font-light leading-tight tracking-wide text-zen-text md:text-7xl">
+            Product-Market
+            <br />
+            Fit
+          </h1>
+          <p className="mt-6 max-w-lg text-base font-light leading-relaxed text-zen-accent">
+            A guided journey that gates your progress through the scientific PMF
+            process — until each waypoint is genuinely earned. Sourcing, hypothesis,
+            validation, metrics, surprise, decision. Then exports a Sequoia-style
+            2-pager memo.
+          </p>
+        </div>
+
+        <div
+          className="flex max-w-xl flex-col gap-6 fade-in-up"
+          style={{ animationDelay: "0.1s" }}
+        >
+          {[
+            { label: "Unique Insight", value: "Right + Non-consensus" },
+            { label: "Technological Inflection", value: "Durable" },
+            { label: "Desperate Customers", value: "Behavior > Intent" },
+            { label: "The Surprise", value: "Look for the good" },
+          ].map((row) => (
+            <div
+              key={row.label}
+              className="group flex items-baseline justify-between border-b border-zen-line/60 pb-1 transition-colors duration-500 hover:border-zen-text/40"
+            >
+              <h3 className="font-serif text-2xl text-zen-text">{row.label}</h3>
+              <span className="text-xs uppercase tracking-widest text-zen-accent">
+                {row.value}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div
+          className="mt-12 flex flex-wrap items-center gap-4 fade-in-up"
+          style={{ animationDelay: "0.2s" }}
+        >
+          <Link
+            href={user ? "/projects" : "/try"}
+            className="rounded-sm border border-zen-text bg-zen-text px-6 py-3 text-sm uppercase tracking-widest text-zen-bg transition hover:bg-zen-deep"
+          >
+            {user ? "Open your projects →" : "Try the journey →"}
+          </Link>
+          {!user && (
+            <Link
+              href="/sign-in"
+              className="rounded-sm border border-zen-line px-6 py-3 text-sm uppercase tracking-widest text-zen-text transition hover:border-zen-text"
+            >
+              Sign in to save
+            </Link>
+          )}
+        </div>
+
+        {!user && (
+          <p
+            className="mt-4 max-w-md text-xs text-zen-light fade-in-up"
+            style={{ animationDelay: "0.25s" }}
+          >
+            No account required to demo. Sign in to save progress, upload evidence,
+            and export your memo.
+          </p>
+        )}
+
+        <footer className="mt-20 max-w-md border-t border-zen-line/60 pt-6 text-xs text-zen-light">
+          “When a great team meets a lousy market, market wins. When a great team
+          meets a great market — something special happens.”
+        </footer>
+      </section>
     </main>
   );
 }

@@ -19,10 +19,10 @@ async function createProject(formData: FormData) {
     .single();
   if (error || !data) throw new Error(error?.message ?? "Failed to create project");
 
-  // Seed all 9 stages as "in_progress" so every waypoint is reachable from
+  // Seed all 8 stages as "in_progress" so every waypoint is reachable from
   // the start. The UI marks them green once passed.
   await supabase.from("stages").insert(
-    Array.from({ length: 9 }).map((_, i) => ({
+    Array.from({ length: 8 }).map((_, i) => ({
       project_id: data.id,
       stage_number: i + 1,
       status: "in_progress",
@@ -52,7 +52,7 @@ export default function NewProjectPage() {
           Name your project
         </h1>
         <p className="mt-3 font-mono text-sm leading-relaxed text-white/75">
-          Each journey runs through all 9 stages. You can rename it later.
+          Each journey runs through all 8 stages. You can rename it later.
         </p>
       </div>
 

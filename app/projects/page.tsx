@@ -89,7 +89,7 @@ export default async function ProjectsPage() {
                 </div>
                 <div className="mt-1 flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-neon-cyan/60">
                   <span>
-                    {passed} of 9 stages passed
+                    {passed} of 8 stages passed
                   </span>
                   <span className="text-white/80">
                     Updated {new Date(p.updated_at).toLocaleDateString()}
@@ -99,7 +99,7 @@ export default async function ProjectsPage() {
                 <div className="mt-2 h-[3px] w-full overflow-hidden bg-neon-cyan/15">
                   <div
                     className="h-full bg-neon-cyan transition-all"
-                    style={{ width: `${(passed / 9) * 100}%` }}
+                    style={{ width: `${(passed / 8) * 100}%` }}
                   />
                 </div>
               </Link>

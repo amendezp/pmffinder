@@ -24,7 +24,6 @@ const STAGE_LABELS = [
   "Implementation",
   "MVP Metrics",
   "Surprise",
-  "Decision",
 ];
 
 const CYAN = "#00f0ff";
@@ -84,9 +83,10 @@ export function Compass({
   const outerR = size * 0.48;
   const waypointR = size * 0.014;
 
+  const N = STAGE_LABELS.length;
   const waypoints = STAGE_LABELS.map((label, i) => {
     const stage = i + 1;
-    const angle = (i / 7) * Math.PI * 2 - Math.PI / 2;
+    const angle = (i / N) * Math.PI * 2 - Math.PI / 2;
     return {
       stage,
       label,
@@ -98,7 +98,7 @@ export function Compass({
     };
   });
 
-  const needleAngle = ((activeStage - 1) / 7) * 360;
+  const needleAngle = ((activeStage - 1) / N) * 360;
   const needleLength = ringR - waypointR * 2;
 
   // Sweep beam wedge

@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     .map((r) => r.stage_number);
   const maxPassed = passedNumbers.length ? Math.max(...passedNumbers) : 0;
   const nextToUnlock = maxPassed + 1;
-  if (nextToUnlock >= 1 && nextToUnlock <= 8) {
+  if (nextToUnlock >= 1 && nextToUnlock <= 7) {
     const existing = rows.find((r) => r.stage_number === nextToUnlock);
     if (!existing) {
       await supabase.from("stages").insert({

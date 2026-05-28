@@ -40,17 +40,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Gating: memo requires Stage 8 (Savor the Surprise) passed — that's the
-  // final waypoint in the journey.
+  // Gating: memo requires Stage 7 (PMF Metrics + Savor the Surprise) passed —
+  // that's the final waypoint in the journey.
   const { data: finalStage } = await supabase
     .from("stages")
     .select("status, responses")
     .eq("project_id", projectId)
-    .eq("stage_number", 8)
+    .eq("stage_number", 7)
     .maybeSingle();
   if (!finalStage || finalStage.status !== "passed") {
     return NextResponse.json(
-      { error: "Stage 8 (Savor the Surprise) must be passed before generating a memo" },
+      { error: "Stage 7 must be passed before generating a memo" },
       { status: 409 }
     );
   }

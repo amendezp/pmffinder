@@ -6,11 +6,11 @@ A guided journey app that walks you through the **scientific Product/Market Fit 
 
 ## What it does
 
-- **8 stages**, each with a structured form. Open from the start; passed stages are marked green.
+- **7 stages**, each with a structured form. Open from the start; passed stages are marked green.
 - **AI grades each stage** against an encoded rubric — unique (non-consensus) insight, technological inflection, desperate (not needing) customers, behavioral (not intent) metrics, savor the surprise, pivot the Who not the What.
 - **Per-stage evidence panel**: upload screenshots, paste transcripts. Images are passed to the grader so it can verify your claims.
 - **Coaching chat per stage**: Socratic helper that uses the same rubric, but doesn't grade — pressure-test your draft before submitting.
-- **2-pager investor memo** synthesized from all 8 stages, printable to PDF, shareable via public token link.
+- **2-pager investor memo** synthesized from all 7 stages, printable to PDF, shareable via public token link.
 
 ## Stack
 
@@ -94,7 +94,7 @@ lib/
 db/                             # schema.sql + policies.sql
 ```
 
-## The 8 stages
+## The 7 stages
 
 | # | Stage | What it checks |
 |---|---|---|
@@ -104,8 +104,7 @@ db/                             # schema.sql + policies.sql
 | 4 | The How | Clear business model; charges from day one (unless ad-based); disruptive angle if claimed |
 | 5 | Validate Problem / Concept | Cheap concept-validation method; desperation (not need); prior solution attempts |
 | 6 | Validate Implementation | Tried to sell (not asked); behavioral signal; 5 Whys to root cause; "no" diagnosed correctly |
-| 7 | MVP PMF Metrics | Behavior-based; exponential organic growth (consumer) or sales yield > 1 (enterprise); word of mouth |
-| 8 | Savor the Surprise | A real surprise named; inflection in data; double down rather than fix the bad |
+| 7 | MVP Metrics + Surprise | Behavior-based; exp organic growth (consumer) or sales yield > 1 (enterprise); word of mouth; the surprise you'll double down on |
 
 ## License
 

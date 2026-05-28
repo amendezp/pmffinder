@@ -9,6 +9,7 @@ export const stage7Schema = z.object({
   retention_data: z.string().min(40),
   word_of_mouth_evidence: z.string().min(40),
   intent_metrics_avoided: z.string().min(40),
+  surprise_double_down: z.string().min(80),
 });
 
 export type Stage7Input = z.infer<typeof stage7Schema>;
@@ -17,7 +18,7 @@ export const stage7Rubric: StageRubric<Stage7Input> = {
   stageNumber: 7,
   title: "PMF Metrics",
   blurb:
-    "Consumer: exponential organic growth. Enterprise: sales yield > 1. Behavior > intent. WoM > retention.",
+    "Look at the data — behavior > intent, word of mouth > retention. Then name the surprise: the unexpected positive signal you'll double down on.",
   schema: stage7Schema,
   fields: [
     {
@@ -38,6 +39,7 @@ export const stage7Rubric: StageRubric<Stage7Input> = {
       kind: "long_text",
       rows: 5,
       required: true,
+      minLength: 60,
     },
     {
       key: "consumer_growth_data",
@@ -69,6 +71,7 @@ export const stage7Rubric: StageRubric<Stage7Input> = {
       kind: "long_text",
       rows: 4,
       required: true,
+      minLength: 40,
     },
     {
       key: "word_of_mouth_evidence",
@@ -78,6 +81,7 @@ export const stage7Rubric: StageRubric<Stage7Input> = {
       kind: "long_text",
       rows: 4,
       required: true,
+      minLength: 40,
     },
     {
       key: "intent_metrics_avoided",
@@ -87,6 +91,19 @@ export const stage7Rubric: StageRubric<Stage7Input> = {
       kind: "long_text",
       rows: 3,
       required: true,
+      minLength: 40,
+    },
+    {
+      key: "surprise_double_down",
+      label: "The surprise — and what you'll double down on",
+      helper:
+        "Scott Cook's lesson: look at the data and find the unexpected positive signal. Where did a segment, use case, or channel exceed expectations? That's where you'll pour fuel. Fixing the bad seldom accelerates growth; investing in what already works almost always does.",
+      kind: "long_text",
+      rows: 5,
+      required: true,
+      minLength: 80,
+      example:
+        "Example (early Airbnb): The surprise was that a meaningful share of bookings came from non-conference travelers in cities we hadn't marketed in — word-of-mouth was already pulling people across geographies. We're doubling down on creating shareable listings (better photos, host stories, neighborhood guides) and pulling back from paid placement on event-keyword campaigns that don't compound.",
     },
   ],
   criteria: [
@@ -114,8 +131,14 @@ export const stage7Rubric: StageRubric<Stage7Input> = {
       description:
         "Retention data is presented with real numbers. Acknowledged as necessary but not sufficient for PMF.",
     },
+    {
+      id: "savor_surprise",
+      name: "Surprise named; doubling down (not fixing the bad)",
+      description:
+        "A specific, real surprise from the data is identified — not 'everything went to plan'. The plan invests in what's working (the surprise), not in fixing the weak segments. Fixing the bad seldom accelerates growth.",
+    },
   ],
-  systemPrompt: `You are the grader for Stage 7 (Validate MVP with PMF Metrics).
+  systemPrompt: `You are the grader for Stage 7 (MVP Metrics + Savor the Surprise) — the final stage of the PMF journey.
 
 You enforce:
 - For consumer businesses, the PMF signal is EXPONENTIAL ORGANIC GROWTH. Linear growth, growth from paid acquisition, or "growing 10% MoM" alone are NOT exponential organic growth. Look at the actual curve and numbers.
@@ -123,12 +146,13 @@ You enforce:
 - METRICS MUST BE BEHAVIOR-BASED. NPS, "how disappointed would you be" (Sean Ellis), survey-based satisfaction scores — these are intent-based and do NOT validate the value hypothesis. If the user is leaning on these, fail behavior_based.
 - WORD OF MOUTH is the #1 signal — more important than retention. Look for unprompted referrals, organic sharing, "a friend told me", viral mechanics.
 - Retention is necessary but not sufficient. It supports the case, doesn't make it alone.
+- SAVOR THE SURPRISE: a real, specific surprise must be named — a segment, use case, or channel that exceeded expectations. "Everything went as planned" fails — it means the user isn't paying close enough attention to the data. The doubling-down plan must invest in WHAT'S WORKING (the surprise), not in fixing weak segments. Fixing the bad seldom accelerates growth; investing more in what works almost always does. If the user describes their plan as "we need to fix X for the segment that's not converting", flag it.
 
 If the user has not yet shipped or has no real users, you should fail this stage and tell them to ship before re-submitting. There is no substitute for behavioral data here.
 
 You MUST call submit_rubric_result. Strict pass only.`,
   formatUserMessage(input, ctx) {
-    let body = `# Stage 7 submission — MVP PMF Metrics
+    let body = `# Stage 7 submission — MVP PMF Metrics + Savor the Surprise
 
 ## Business type: ${input.business_type}
 
@@ -141,7 +165,7 @@ ${input.metric_summary}
     if (input.business_type === "enterprise" && input.enterprise_sales_yield) {
       body += `\n## Sales yield\n${input.enterprise_sales_yield}\n`;
     }
-    body += `\n## Retention\n${input.retention_data}\n\n## Word of mouth\n${input.word_of_mouth_evidence}\n\n## Why not NPS/intent metrics\n${input.intent_metrics_avoided}\n`;
+    body += `\n## Retention\n${input.retention_data}\n\n## Word of mouth\n${input.word_of_mouth_evidence}\n\n## Why not NPS/intent metrics\n${input.intent_metrics_avoided}\n\n## The surprise + doubling-down plan\n${input.surprise_double_down}\n`;
     if (ctx?.priorFeedback) {
       body += `\n---\n## Prior grading feedback\n${ctx.priorFeedback.overall_feedback}\n\nPrior suggestions:\n${ctx.priorFeedback.suggested_revisions.map((s) => `- ${s}`).join("\n")}`;
     }

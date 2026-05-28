@@ -27,7 +27,7 @@ export function GuestJourney() {
   const active = state ? activeStageNumber(state) : 1;
   const passed = state ? passedStages(state) : new Set<number>();
 
-  const stagesArr = Array.from({ length: 8 }).map((_, i) => {
+  const stagesArr = Array.from({ length: 7 }).map((_, i) => {
     const n = i + 1;
     const guestStage = state?.stages[n];
     const status: "locked" | "in_progress" | "passed" = guestStage?.status === "passed"
@@ -38,7 +38,7 @@ export function GuestJourney() {
     return { stage_number: n, status };
   });
 
-  const allPassed = passed.size === 8;
+  const allPassed = passed.size === 7;
 
   function resetDemo() {
     if (!confirm("Reset your demo progress? This clears everything in this browser.")) return;
@@ -61,7 +61,7 @@ export function GuestJourney() {
       <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,500px)]">
         <section className="fade-in-up" style={{ animationDelay: "0.1s" }}>
           <h2 className="mb-6 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/70">
-            <span>The 8 stages</span>
+            <span>The 7 stages</span>
             <div className="h-px flex-1 bg-neon-cyan/20" />
           </h2>
           <JourneyMap stages={stagesArr} hrefBase="/try/stage" />
@@ -69,7 +69,7 @@ export function GuestJourney() {
           {allPassed && (
             <div className="mt-8 border-l border-neon-cyan bg-gradient-to-r from-neon-cyan/10 to-transparent px-5 py-4 shadow-cyber-glow">
               <div className="mb-2 font-mono text-[10px] uppercase tracking-widest text-neon-cyan">
-                All eight stages passed
+                All seven stages passed
               </div>
               <h3 className="font-serif text-3xl italic text-white text-glow">
                 You're ready to export your memo.

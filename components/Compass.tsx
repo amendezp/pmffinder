@@ -22,8 +22,7 @@ const STAGE_LABELS = [
   "The How",
   "Concept",
   "Implementation",
-  "MVP Metrics",
-  "Surprise",
+  "Metrics + Surprise",
 ];
 
 const CYAN = "#00f0ff";

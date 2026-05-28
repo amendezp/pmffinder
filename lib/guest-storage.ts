@@ -84,7 +84,7 @@ export function guestHasProgress(state: GuestState = readGuestState()): boolean 
 }
 
 export function activeStageNumber(state: GuestState = readGuestState()): number {
-  for (let i = 1; i <= 8; i++) {
+  for (let i = 1; i <= 7; i++) {
     if (state.stages[i]?.status !== "passed") return i;
   }
   return 7;

@@ -35,15 +35,15 @@ export function StageStepper({
       <div className="mb-2 flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-neon-cyan/70">
         <span>Your journey</span>
         <span className="text-white">
-          {passedCount} of 8 passed
+          {passedCount} of 7 passed
           {currentStage ? ` · on stage ${currentStage}` : ""}
         </span>
       </div>
       <ol className="flex w-full items-center">
-        {Array.from({ length: 8 }).map((_, idx) => {
+        {Array.from({ length: 7 }).map((_, idx) => {
           const n = idx + 1;
           const status = statusByStage.get(n) ?? "locked";
-          const rubric = rubrics[n as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8];
+          const rubric = rubrics[n as 1 | 2 | 3 | 4 | 5 | 6 | 7];
           const isCurrent = currentStage === n;
           const isPassed = status === "passed";
 
@@ -73,7 +73,7 @@ export function StageStepper({
               key={n}
               className={[
                 "flex flex-1 items-center",
-                idx === 7 ? "flex-none" : "",
+                idx === 6 ? "flex-none" : "",
               ].join(" ")}
             >
               {href ? (
@@ -83,7 +83,7 @@ export function StageStepper({
               ) : (
                 dot
               )}
-              {idx < 7 && (
+              {idx < 6 && (
                 <div
                   className={[
                     "h-px flex-1",

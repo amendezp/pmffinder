@@ -62,9 +62,9 @@ export const MEMO_SECTIONS: MemoSection[] = [
     key: "traction",
     title: "Traction & PMF Evidence",
     wordTarget: 140,
-    sourceStages: [7, 8, 6],
+    sourceStages: [7, 6],
     guidance:
-      "Behavioral evidence from Stages 6–8: organic growth, sales yield, word of mouth, reach-across-table reactions, the surprise you're now doubling down on.",
+      "Behavioral evidence from Stages 6–7: organic growth, sales yield, word of mouth, reach-across-table reactions, the surprise you're doubling down on.",
   },
   {
     key: "business_model",

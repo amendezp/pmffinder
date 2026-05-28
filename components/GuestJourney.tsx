@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Compass } from "./Compass";
 import { JourneyMap } from "./JourneyMap";
 import { StageStepper } from "./StageStepper";
+import { MemoPreviewCard } from "./MemoPreviewCard";
+import { buildDraftMemo } from "@/lib/memo/draftFromStages";
 import {
   readGuestState,
   activeStageNumber,
@@ -39,6 +41,25 @@ export function GuestJourney() {
   });
 
   const allPassed = passed.size === 7;
+
+  // Build a draft memo from the guest state for the preview card + compass link.
+  const draft = mounted
+    ? buildDraftMemo({
+        stageResponses: Object.fromEntries(
+          Array.from({ length: 7 }).map((_, i) => [
+            i + 1,
+            state?.stages[i + 1]?.responses ?? {},
+          ])
+        ),
+        stagePassed: Object.fromEntries(
+          Array.from({ length: 7 }).map((_, i) => [
+            i + 1,
+            state?.stages[i + 1]?.status === "passed",
+          ])
+        ),
+        companyName: "Demo memo",
+      })
+    : null;
 
   function resetDemo() {
     if (!confirm("Reset your demo progress? This clears everything in this browser.")) return;
@@ -99,10 +120,24 @@ export function GuestJourney() {
         </section>
 
         <aside
-          className="flex justify-center lg:sticky lg:top-8 fade-in-up"
+          className="flex flex-col items-center gap-4 lg:sticky lg:top-8 fade-in-up"
           style={{ animationDelay: "0.15s" }}
         >
-          <Compass activeStage={active} passedStages={passed} size={460} />
+          <Compass
+            activeStage={active}
+            passedStages={passed}
+            size={460}
+            memoHref="/try/memo"
+          />
+          {mounted && draft && (
+            <div className="w-full max-w-[340px]">
+              <MemoPreviewCard
+                sectionStatuses={draft.sectionStatuses}
+                draftedCount={draft.counts.drafted}
+                href="/try/memo"
+              />
+            </div>
+          )}
         </aside>
       </div>
     </div>

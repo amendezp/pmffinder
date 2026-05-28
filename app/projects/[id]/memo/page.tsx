@@ -3,7 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MemoTemplate } from "@/components/MemoTemplate";
 import { ShareMemoDialog } from "@/components/ShareMemoDialog";
-import { MemoBuilderForm, PrintButton } from "./client";
+import { MemoControls, PolishedOrDraft } from "./client";
+import { buildDraftMemo } from "@/lib/memo/draftFromStages";
 import type { MemoContent } from "@/lib/memo/template";
 
 export default async function MemoPage({
@@ -25,16 +26,20 @@ export default async function MemoPage({
     .single();
   if (!project || project.user_id !== user.id) notFound();
 
-  // Check stage 7.
-  const { data: stage7 } = await supabase
+  // All stages.
+  const { data: stages } = await supabase
     .from("stages")
-    .select("status")
-    .eq("project_id", id)
-    .eq("stage_number", 7)
-    .maybeSingle();
-  const stage7Passed = stage7?.status === "passed";
+    .select("stage_number, status, responses")
+    .eq("project_id", id);
 
-  // Latest memo.
+  const stageResponses: Record<number, unknown> = {};
+  const stagePassed: Record<number, boolean> = {};
+  for (const s of stages ?? []) {
+    stageResponses[s.stage_number] = s.responses;
+    stagePassed[s.stage_number] = s.status === "passed";
+  }
+
+  // Latest polished memo (if any).
   const { data: memo } = await supabase
     .from("memos")
     .select("id, content, generated_at, share_token, is_public, view_count")
@@ -43,64 +48,73 @@ export default async function MemoPage({
     .limit(1)
     .maybeSingle();
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const draft = buildDraftMemo({
+    stageResponses,
+    stagePassed,
+    companyName: project.name,
+  });
 
-  if (!stage7Passed && !memo) {
-    return (
-      <main className="mx-auto max-w-2xl px-6 py-16 text-center">
-        <Link href={`/projects/${id}`} className="text-xs text-ink-700/80 underline">
-          ← Back to journey
-        </Link>
-        <h1 className="mt-4 font-display text-3xl text-ink-900">Memo not unlocked yet</h1>
-        <p className="mt-2 text-ink-700">
-          Finish Stage 7 (Decision Tree) — that's the final gate before the memo.
-        </p>
-      </main>
-    );
-  }
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const hasPolished = !!memo;
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3 no-print">
-        <div>
-          <Link
-            href={`/projects/${id}`}
-            className="text-xs text-ink-700/80 underline-offset-4 hover:underline"
-          >
-            ← Back to journey
+    <main className="relative mx-auto min-h-screen max-w-5xl px-6 py-10 md:px-12">
+      <header className="relative mb-6 no-print">
+        <div className="mb-3 flex items-center gap-4 font-mono text-xs uppercase tracking-widest text-neon-cyan/80">
+          <div className="h-2 w-2 animate-pulse bg-neon-cyan" />
+          <Link href={`/projects/${id}`} className="hover:text-neon-cyan">
+            ← {project.name}
           </Link>
-          <h1 className="mt-1 font-display text-3xl text-ink-900">{project.name} — memo</h1>
+          <div className="hud-line-decorator h-px flex-1 opacity-50" />
+          <span className="text-white/70">
+            Memo · {draft.counts.drafted}/{draft.counts.total} drafted
+          </span>
         </div>
-        <div className="flex items-center gap-2">
-          {memo && <PrintButton />}
+        <div className="relative">
+          <div className="absolute -left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-neon-cyan/0 via-neon-cyan to-neon-cyan/0" />
+          <h2 className="mb-1 font-mono text-sm uppercase tracking-widest text-neon-cyan/70">
+            Your investment memo
+          </h2>
+          <h1 className="font-serif text-4xl italic text-white text-glow-white md:text-5xl">
+            {project.name}
+          </h1>
         </div>
       </header>
 
-      {!memo ? (
-        <MemoBuilderForm projectId={id} defaultName={project.name} />
+      <MemoControls
+        projectId={id}
+        defaultName={project.name}
+        hasPolished={hasPolished}
+        polishedGeneratedAt={memo?.generated_at ?? null}
+        draftedCount={draft.counts.drafted}
+        totalCount={draft.counts.total}
+      />
+
+      {hasPolished ? (
+        <PolishedOrDraft
+          polishedContent={memo!.content as MemoContent}
+          draftContent={draft.content}
+          draftStatuses={draft.sectionStatuses}
+          projectName={project.name}
+        />
       ) : (
-        <>
-          <MemoTemplate
-            content={memo.content as MemoContent}
-            projectName={project.name}
+        <MemoTemplate
+          content={draft.content}
+          projectName={project.name}
+          sectionStatuses={draft.sectionStatuses}
+        />
+      )}
+
+      {hasPolished && (
+        <div className="mt-6 no-print">
+          <ShareMemoDialog
+            memoId={memo!.id}
+            isPublic={memo!.is_public}
+            shareToken={memo!.share_token}
+            viewCount={memo!.view_count}
+            appUrl={appUrl}
           />
-          <div className="mt-6">
-            <ShareMemoDialog
-              memoId={memo.id}
-              isPublic={memo.is_public}
-              shareToken={memo.share_token}
-              viewCount={memo.view_count}
-              appUrl={appUrl}
-            />
-          </div>
-          <div className="mt-6 no-print">
-            <MemoBuilderForm
-              projectId={id}
-              defaultName={project.name}
-              regenerate
-            />
-          </div>
-        </>
+        </div>
       )}
     </main>
   );

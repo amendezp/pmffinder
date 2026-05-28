@@ -8,6 +8,7 @@ import { CoachingChat } from "@/components/CoachingChat";
 import { StageStepper } from "@/components/StageStepper";
 import { ReferencePanel } from "@/components/ReferencePanel";
 import type { RubricResult } from "@/lib/rubrics";
+import { buildDraftMemo } from "@/lib/memo/draftFromStages";
 
 export default async function StagePage({
   params,
@@ -56,15 +57,29 @@ export default async function StagePage({
     .eq("stage_number", stageNumber)
     .maybeSingle();
 
-  // All stages for the stepper at the top.
+  // All stages for the stepper + memo chip at the top.
   const { data: allStagesRaw } = await supabase
     .from("stages")
-    .select("stage_number, status")
+    .select("stage_number, status, responses")
     .eq("project_id", id);
   const allStages = (allStagesRaw ?? []) as Array<{
     stage_number: number;
     status: "locked" | "in_progress" | "passed";
+    responses: Record<string, unknown> | null;
   }>;
+
+  // Build draft memo summary for the breadcrumb chip.
+  const stageResponsesAll: Record<number, unknown> = {};
+  const stagePassedAll: Record<number, boolean> = {};
+  for (const s of allStages) {
+    stageResponsesAll[s.stage_number] = s.responses ?? {};
+    stagePassedAll[s.stage_number] = s.status === "passed";
+  }
+  const memoDraft = buildDraftMemo({
+    stageResponses: stageResponsesAll,
+    stagePassed: stagePassedAll,
+    companyName: project.name,
+  });
 
   const evidence = (evidenceRows ?? []) as EvidenceItem[];
   const chatMessages =
@@ -79,6 +94,13 @@ export default async function StagePage({
             ← {project.name}
           </Link>
           <div className="hud-line-decorator h-px flex-1 opacity-50" />
+          <Link
+            href={`/projects/${id}/memo`}
+            className="border border-neon-cyan/30 bg-neon-cyan/[0.03] px-3 py-1 normal-case text-neon-cyan/85 hover:border-neon-cyan/70 hover:text-neon-cyan"
+            title="View your investment memo"
+          >
+            Memo · {memoDraft.counts.drafted}/{memoDraft.counts.total} →
+          </Link>
         </div>
         <div className="relative">
           <div className="absolute -left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-neon-cyan/0 via-neon-cyan to-neon-cyan/0" />

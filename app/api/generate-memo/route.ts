@@ -40,20 +40,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Gating: memo requires Stage 7 (PMF Metrics + Savor the Surprise) passed —
-  // that's the final waypoint in the journey.
-  const { data: finalStage } = await supabase
-    .from("stages")
-    .select("status, responses")
-    .eq("project_id", projectId)
-    .eq("stage_number", 7)
-    .maybeSingle();
-  if (!finalStage || finalStage.status !== "passed") {
-    return NextResponse.json(
-      { error: "Stage 7 must be passed before generating a memo" },
-      { status: 409 }
-    );
-  }
+  // Polish-with-AI is always available — even with partial data. The
+  // synthesizer's system prompt already handles thin sections ("write it
+  // short and honest, not padded").
 
   // Gather all stage responses.
   const { data: stages } = await supabase

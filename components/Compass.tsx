@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 interface CompassProps {
   /** 1..7 — the active stage. */
@@ -13,6 +14,12 @@ interface CompassProps {
   size?: number;
   /** When true, hide labels (use for decorative background instance). */
   decorative?: boolean;
+  /**
+   * When provided, the center of the compass becomes a clickable affordance
+   * linking to the memo (or any other destination). Used to tie the radar
+   * to the artifact it's producing.
+   */
+  memoHref?: string;
 }
 
 const STAGE_LABELS = [
@@ -73,7 +80,9 @@ export function Compass({
   onStageClick,
   size = 480,
   decorative = false,
+  memoHref,
 }: CompassProps) {
+  const router = useRouter();
   const cx = size / 2;
   const cy = size / 2;
   const innerR = size * 0.15;
@@ -254,21 +263,34 @@ export function Compass({
           fill="none"
         />
 
-        {/* Center */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={size * 0.018}
-          fill={WHITE}
-        />
-        <circle
-          cx={cx}
-          cy={cy}
-          r={size * 0.05}
-          stroke={CYAN}
-          strokeWidth={1.5}
-          fill="none"
-        />
+        {/* Center — clickable hit target when memoHref is provided */}
+        <g
+          className={memoHref ? "cursor-pointer" : ""}
+          onClick={memoHref ? () => router.push(memoHref) : undefined}
+        >
+          {memoHref && (
+            <>
+              {/* Invisible hit target slightly larger than the visible center */}
+              <circle
+                cx={cx}
+                cy={cy}
+                r={size * 0.07}
+                fill="transparent"
+              >
+                <title>View your memo →</title>
+              </circle>
+            </>
+          )}
+          <circle cx={cx} cy={cy} r={size * 0.018} fill={WHITE} />
+          <circle
+            cx={cx}
+            cy={cy}
+            r={size * 0.05}
+            stroke={CYAN}
+            strokeWidth={1.5}
+            fill="none"
+          />
+        </g>
         <SpinG cx={cx} cy={cy} duration={10}>
           <circle
             cx={cx}

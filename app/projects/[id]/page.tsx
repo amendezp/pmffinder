@@ -3,7 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { Compass } from "@/components/Compass";
 import { JourneyMap } from "@/components/JourneyMap";
 import { StageStepper } from "@/components/StageStepper";
+import { MemoPreviewCard } from "@/components/MemoPreviewCard";
 import { createClient } from "@/lib/supabase/server";
+import { buildDraftMemo } from "@/lib/memo/draftFromStages";
 
 export default async function ProjectPage({
   params,
@@ -26,12 +28,26 @@ export default async function ProjectPage({
 
   const { data: stagesRaw } = await supabase
     .from("stages")
-    .select("stage_number, status")
+    .select("stage_number, status, responses")
     .eq("project_id", id);
   const stages = (stagesRaw ?? []) as Array<{
     stage_number: number;
     status: "locked" | "in_progress" | "passed";
+    responses: Record<string, unknown> | null;
   }>;
+
+  // Build the live draft memo from current stage data.
+  const stageResponses: Record<number, unknown> = {};
+  const stagePassed: Record<number, boolean> = {};
+  for (const s of stages) {
+    stageResponses[s.stage_number] = s.responses ?? {};
+    stagePassed[s.stage_number] = s.status === "passed";
+  }
+  const draft = buildDraftMemo({
+    stageResponses,
+    stagePassed,
+    companyName: project.name,
+  });
 
   let active = 1;
   const statusMap = new Map(stages.map((s) => [s.stage_number, s.status]));
@@ -77,16 +93,16 @@ export default async function ProjectPage({
           <h1 className="font-serif text-5xl italic leading-tight text-white text-glow-white md:text-6xl">
             {project.name}
           </h1>
-          {allPassed && (
-            <div className="mt-6">
-              <Link
-                href={`/projects/${project.id}/memo`}
-                className="inline-block border border-neon-cyan bg-neon-cyan/15 px-5 py-2.5 font-mono text-xs uppercase tracking-widest text-neon-cyan shadow-cyber-glow transition hover:bg-neon-cyan hover:text-deep-blue"
-              >
-                {memo ? "Open your memo →" : "Generate your memo →"}
-              </Link>
-            </div>
-          )}
+          <div className="mt-6">
+            <Link
+              href={`/projects/${project.id}/memo`}
+              className="inline-block border border-neon-cyan bg-neon-cyan/15 px-5 py-2.5 font-mono text-xs uppercase tracking-widest text-neon-cyan shadow-cyber-glow transition hover:bg-neon-cyan hover:text-deep-blue"
+            >
+              {memo
+                ? "Open your memo →"
+                : `Your memo so far · ${draft.counts.drafted}/${draft.counts.total} →`}
+            </Link>
+          </div>
         </div>
 
         {/* Always-visible stepper */}
@@ -108,10 +124,22 @@ export default async function ProjectPage({
           </section>
 
           <aside
-            className="flex justify-center lg:sticky lg:top-8 fade-in-up"
+            className="flex flex-col items-center gap-4 lg:sticky lg:top-8 fade-in-up"
             style={{ animationDelay: "0.1s" }}
           >
-            <Compass activeStage={active} passedStages={passedStages} size={460} />
+            <Compass
+              activeStage={active}
+              passedStages={passedStages}
+              size={460}
+              memoHref={`/projects/${id}/memo`}
+            />
+            <div className="w-full max-w-[340px]">
+              <MemoPreviewCard
+                sectionStatuses={draft.sectionStatuses}
+                draftedCount={draft.counts.drafted}
+                href={`/projects/${id}/memo`}
+              />
+            </div>
           </aside>
         </div>
       </section>

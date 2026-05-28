@@ -9,6 +9,7 @@ import { GuestBanner } from "./GuestBanner";
 import { GuestCoachingChat } from "./GuestCoachingChat";
 import { StageStepper } from "./StageStepper";
 import { ReferencePanel } from "./ReferencePanel";
+import { buildDraftMemo } from "@/lib/memo/draftFromStages";
 import {
   readGuestState,
   setStage,
@@ -87,6 +88,22 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
   const nextN = stageNumber + 1;
   const nextHref = nextN <= 7 ? `/try/stage/${nextN}` : "/try";
 
+  // Build a draft memo for the breadcrumb chip.
+  const memoDraft = mounted
+    ? buildDraftMemo({
+        stageResponses: Object.fromEntries(
+          allStages.map((s) => {
+            const local = readGuestState().stages[s.stage_number];
+            return [s.stage_number, local?.responses ?? {}];
+          })
+        ),
+        stagePassed: Object.fromEntries(
+          allStages.map((s) => [s.stage_number, s.status === "passed"])
+        ),
+        companyName: "Demo memo",
+      })
+    : null;
+
   return (
     <main className="relative mx-auto min-h-screen max-w-5xl px-6 py-10 md:px-12">
       <header className="relative mb-8">
@@ -96,6 +113,15 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
             ← Your journey
           </Link>
           <div className="hud-line-decorator h-px flex-1 opacity-50" />
+          {memoDraft && (
+            <Link
+              href="/try/memo"
+              className="border border-neon-cyan/30 bg-neon-cyan/[0.03] px-3 py-1 normal-case text-neon-cyan/85 hover:border-neon-cyan/70 hover:text-neon-cyan"
+              title="View your investment memo"
+            >
+              Memo · {memoDraft.counts.drafted}/{memoDraft.counts.total} →
+            </Link>
+          )}
         </div>
         <div className="relative">
           <div className="absolute -left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-neon-cyan/0 via-neon-cyan to-neon-cyan/0" />

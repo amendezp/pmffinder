@@ -44,9 +44,9 @@ export default async function Landing() {
             A guided journey to
           </h2>
           <h1 className="bg-gradient-to-br from-white to-neon-cyan bg-clip-text font-serif text-7xl italic leading-[0.95] text-transparent text-glow md:text-[7rem]">
-            product/
+            product-market
             <br />
-            market fit
+            fit
           </h1>
         </div>
 
@@ -84,20 +84,20 @@ export default async function Landing() {
 
         {/* Slim stage strip — no blurbs */}
         <div className="mt-20 max-w-4xl fade-in-up" style={{ animationDelay: "0.4s" }}>
-          <div className="mb-3 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/60">
+          <div className="mb-4 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/70">
             <span>The seven stages</span>
-            <div className="h-px flex-1 bg-neon-cyan/15" />
+            <div className="h-px flex-1 bg-neon-cyan/20" />
           </div>
-          <ol className="grid grid-cols-2 gap-x-8 gap-y-2 md:grid-cols-4 lg:grid-cols-7">
+          <ol className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-3 lg:grid-cols-4">
             {stages.map((s) => (
               <li
                 key={s.stageNumber}
-                className="flex items-center gap-2 font-mono text-[11px] text-white/65"
+                className="flex items-baseline gap-2 font-mono text-xs text-white/90"
               >
-                <span className="text-neon-cyan/70">
+                <span className="shrink-0 text-neon-cyan/85">
                   {`0${s.stageNumber}`.slice(-2)}
                 </span>
-                <span className="truncate">{s.title}</span>
+                <span className="leading-snug">{s.title}</span>
               </li>
             ))}
           </ol>

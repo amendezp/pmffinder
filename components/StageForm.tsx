@@ -1,13 +1,17 @@
 "use client";
 
 import { useState } from "react";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-import type { StageField, RubricResult, StageRubric } from "@/lib/rubrics";
+import type { StageField, RubricResult } from "@/lib/rubrics";
 import { FeedbackPanel } from "./FeedbackPanel";
 
 interface StageFormProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rubric: StageRubric<any>;
+  /**
+   * Field definitions for the current stage. Plain serializable array — no
+   * functions or class instances. Used to be `rubric: StageRubric<any>` but
+   * StageRubric includes a `formatUserMessage` function and a Zod `schema`
+   * that can't cross the Server→Client component boundary.
+   */
+  fields: StageField[];
   initialResponses?: Record<string, unknown>;
   initialFeedback?: RubricResult | null;
   alreadyPassed?: boolean;
@@ -177,7 +181,7 @@ function Field({
 }
 
 export function StageForm({
-  rubric,
+  fields,
   initialResponses = {},
   initialFeedback = null,
   alreadyPassed = false,
@@ -189,7 +193,7 @@ export function StageForm({
 }: StageFormProps) {
   const [values, setValues] = useState<Record<string, string>>(() => {
     const base: Record<string, string> = {};
-    for (const f of rubric.fields) {
+    for (const f of fields) {
       const v = initialResponses[f.key];
       base[f.key] = typeof v === "string" ? v : v != null ? String(v) : "";
     }
@@ -204,7 +208,7 @@ export function StageForm({
 
   function validateAll(): Record<string, string> {
     const errs: Record<string, string> = {};
-    for (const f of rubric.fields) {
+    for (const f of fields) {
       if (!isFieldVisible(f, values)) continue;
       const e = validateField(f, values[f.key] ?? "");
       if (e) errs[f.key] = e;
@@ -216,7 +220,7 @@ export function StageForm({
     setValues((prev) => ({ ...prev, [key]: v }));
     if (showErrors) {
       // Re-validate as the user types after a failed attempt.
-      const f = rubric.fields.find((x) => x.key === key);
+      const f = fields.find((x) => x.key === key);
       if (f) {
         const e = validateField(f, v);
         setFieldErrors((prev) => {
@@ -268,7 +272,7 @@ export function StageForm({
   return (
     <div className="space-y-7">
       <div className="space-y-6">
-        {rubric.fields.map((field) => {
+        {fields.map((field) => {
           if (!isFieldVisible(field, values)) return null;
           return (
             <Field

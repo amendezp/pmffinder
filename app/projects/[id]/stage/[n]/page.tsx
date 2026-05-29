@@ -128,7 +128,8 @@ export default async function StagePage({
         <section>
           <AuthedStageFormWrapper
             projectId={id}
-            rubric={rubric}
+            stageNumber={rubric.stageNumber}
+            fields={rubric.fields}
             initialResponses={(stageRow?.responses as Record<string, unknown>) ?? {}}
             initialFeedback={(stageRow?.last_feedback as RubricResult | null) ?? null}
             alreadyPassed={stageRow?.status === "passed"}

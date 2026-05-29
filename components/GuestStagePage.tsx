@@ -154,7 +154,7 @@ export function GuestStagePage({ stageNumber }: { stageNumber: number }) {
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,320px)]">
         <section>
           <StageForm
-            rubric={rubric}
+            fields={rubric.fields}
             initialResponses={stageState?.responses ?? {}}
             initialFeedback={stageState?.last_feedback ?? null}
             alreadyPassed={stageState?.status === "passed"}

@@ -1,14 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-import type { RubricResult, StageRubric } from "@/lib/rubrics";
+import type { RubricResult, StageField } from "@/lib/rubrics";
 import { StageForm } from "./StageForm";
 
+/**
+ * Client wrapper around StageForm. Receives only plain serializable props
+ * from the Server Component — never the full `rubric` object, because that
+ * carries a `formatUserMessage` function and a Zod schema with methods that
+ * Next.js refuses to cross the Server→Client boundary.
+ */
 interface AuthedStageFormWrapperProps {
   projectId: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rubric: StageRubric<any>;
+  stageNumber: number;
+  fields: StageField[];
   initialResponses?: Record<string, unknown>;
   initialFeedback?: RubricResult | null;
   alreadyPassed?: boolean;
@@ -16,7 +21,8 @@ interface AuthedStageFormWrapperProps {
 
 export function AuthedStageFormWrapper({
   projectId,
-  rubric,
+  stageNumber,
+  fields,
   initialResponses,
   initialFeedback,
   alreadyPassed,
@@ -29,7 +35,7 @@ export function AuthedStageFormWrapper({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         projectId,
-        stageNumber: rubric.stageNumber,
+        stageNumber,
         responses,
       }),
     });
@@ -40,7 +46,7 @@ export function AuthedStageFormWrapper({
     return result;
   }
 
-  const nextN = rubric.stageNumber + 1;
+  const nextN = stageNumber + 1;
   const nextHref =
     nextN <= 7
       ? `/projects/${projectId}/stage/${nextN}`
@@ -48,7 +54,7 @@ export function AuthedStageFormWrapper({
 
   return (
     <StageForm
-      rubric={rubric}
+      fields={fields}
       initialResponses={initialResponses}
       initialFeedback={initialFeedback}
       alreadyPassed={alreadyPassed}

@@ -9,38 +9,29 @@ export interface MemoSection {
   guidance: string;
 }
 
+/**
+ * Top-level investor memo structure modeled on the classic 2005 Sequoia
+ * YouTube cover memo: Introduction → Deal → Market & Customer → Competition
+ * → Business Model → Traction → Key Risks → Team & Hiring Plan →
+ * Recommendation. Direct, first-person voice from the founder to the
+ * investor.
+ */
 export const MEMO_SECTIONS: MemoSection[] = [
   {
-    key: "company_purpose",
-    title: "Company Purpose",
-    wordTarget: 25,
-    sourceStages: [2],
+    key: "introduction",
+    title: "Introduction",
+    wordTarget: 220,
+    sourceStages: [1, 2, 3],
     guidance:
-      "One sentence. The product's reason to exist. Distilled from the 'What' (Stage 2) — concrete, ambitious, but specific.",
+      "Two to three flowing paragraphs that open the memo. Lead with what the company does and the unique insight that powers it (Stages 1 + 2). Place it in time with the technological inflection (Stage 1). End with a sketch of the initial market (Stage 3). Conversational but precise — this is the investor's first read.",
   },
   {
-    key: "problem",
-    title: "The Problem",
-    wordTarget: 120,
-    sourceStages: [5, 1],
+    key: "the_deal",
+    title: "The Deal",
+    wordTarget: 90,
+    sourceStages: [],
     guidance:
-      "What the target customer can't do today, and why it matters to them. Use language the customer would recognize. Cite the unmet goals heard in concept validation (Stage 5).",
-  },
-  {
-    key: "solution",
-    title: "The Solution",
-    wordTarget: 140,
-    sourceStages: [2, 6],
-    guidance:
-      "What you've built (or are building). Anchor it to the unique insight from Stage 1. State the core value, not a feature list.",
-  },
-  {
-    key: "why_now",
-    title: "Why Now",
-    wordTarget: 110,
-    sourceStages: [1],
-    guidance:
-      "The technological inflection. Why this is possible now and wasn't before. What technological shift unlocks this opportunity in this window.",
+      "Founder-provided. What's being raised, the milestones it gets to, the proposed structure (e.g. $1m seed → $4m Series A on hitting X, Y, Z). Brief and direct.",
   },
   {
     key: "market_customer",
@@ -48,39 +39,55 @@ export const MEMO_SECTIONS: MemoSection[] = [
     wordTarget: 130,
     sourceStages: [3, 5],
     guidance:
-      "The lead bowling pin — the desperate segment from Stage 3 — and the adjacent markets you can move into. Concrete profile.",
+      "The lead bowling pin from Stage 3 — the desperate segment, concrete profile, segmentation dimension, and credible adjacent pins. Cite unmet goals from Stage 5 if they sharpen the picture.",
   },
   {
     key: "competition",
-    title: "Competition / Alternatives",
-    wordTarget: 100,
+    title: "Competition",
+    wordTarget: 140,
     sourceStages: [5],
     guidance:
-      "What customers have tried before to solve this (Stage 5). Honest about real alternatives (incl. spreadsheets, manual workarounds). Why those fall short.",
-  },
-  {
-    key: "traction",
-    title: "Traction & PMF Evidence",
-    wordTarget: 140,
-    sourceStages: [7, 6],
-    guidance:
-      "Behavioral evidence from Stages 6–7: organic growth, sales yield, word of mouth, reach-across-table reactions, the surprise you're doubling down on.",
+      "What target customers actually use today (Stage 5 prior_solutions). Honest about real alternatives, including spreadsheets, manual workarounds, point tools, and any direct startup competitors. Why each falls short. Demonstrates the team has surveyed the field.",
   },
   {
     key: "business_model",
     title: "Business Model",
-    wordTarget: 90,
+    wordTarget: 110,
     sourceStages: [4],
     guidance:
-      "How you charge and distribute (Stage 4). Note the disruptive angle if relevant (simpler/cheaper/more convenient).",
+      "How the company charges and distributes (Stage 4). Charges from day one unless intrinsically advertising-funded. Note the disruptive angle when it is real (simpler/cheaper/more convenient — not 'better, faster, cheaper').",
   },
   {
-    key: "team_ask",
-    title: "Team & The Ask",
-    wordTarget: 110,
-    sourceStages: [],
+    key: "traction",
+    title: "Traction & PMF Evidence",
+    wordTarget: 160,
+    sourceStages: [6, 7],
     guidance:
-      "Team is filled in by the founder at memo-gen time. The ask is what they want next (raise size, milestone, etc.). Keep this short — it's a 2-pager.",
+      "Behavioral evidence. Reach-across-the-table reactions from Stage 6. Stage 7 metrics: organic growth or sales yield, retention, word of mouth. The surprise the team is now doubling down on. Concrete numbers wherever possible — no NPS, no intent surveys.",
+  },
+  {
+    key: "key_risks",
+    title: "Key Risks",
+    wordTarget: 240,
+    sourceStages: [4, 6, 7],
+    guidance:
+      "Three to five honest risks, each as a sub-paragraph (use bold or '—' to separate). Typical categories: competition/defensibility, revenue-model uncertainty, scalability, balancing growth, exit comparables. Use the three-category 'no' diagnosis from Stage 6 to surface the risks the team has actually heard. Investors trust founders who name their risks plainly.",
+  },
+  {
+    key: "team_hiring",
+    title: "Team & Hiring Plan",
+    wordTarget: 150,
+    sourceStages: [1],
+    guidance:
+      "Founder backgrounds — why this team is uniquely positioned to see this insight (use Stage 1 authenticity). Then the hiring plan: roles needed in the next 6–12 months (CEO if missing, VP Sales, VP Eng, key engineers).",
+  },
+  {
+    key: "recommendation",
+    title: "Recommendation",
+    wordTarget: 140,
+    sourceStages: [1, 7],
+    guidance:
+      "Closing conviction. Why this team + this insight + this moment add up. Pull from Stage 1 (unique insight, authenticity) and Stage 7 (the surprise). One paragraph, founder's own voice, no hedging.",
   },
 ];
 
@@ -90,5 +97,7 @@ export interface MemoContent {
     company_name: string;
     one_liner: string;
     generated_at: string;
+    /** Optional: shown in the "From:" line of the header block. */
+    from?: string;
   };
 }

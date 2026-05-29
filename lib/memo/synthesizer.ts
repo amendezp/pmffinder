@@ -60,11 +60,14 @@ export async function synthesizeMemo(args: SynthesizeArgs): Promise<MemoContent>
       {
         type: "text",
         text:
-          `You are writing a polished 2-pager investor memo for a startup that has gone through a rigorous Product/Market Fit process. The structure follows the canonical 2-pager format used by top venture firms. ` +
-          `Tight, declarative, evidence-led prose. No hype, no buzzwords, no marketing-speak. Each section is short — this is a 2-pager. ` +
-          `Concrete details from the founder's stage responses; quote customer language when it strengthens the case. Do not invent ` +
-          `metrics, customers, or quotes that aren't in the source material. If a section has thin evidence, write it short and honest, ` +
-          `not padded.\n\n## Sections (in order)\n${sectionsList}\n\n` +
+          `You are writing a top-level investor memo in the style of classic Sequoia partner notes (the 2005 YouTube memo, for example): direct, first-person, honest about risks, structured for a partner who will skim in five minutes.\n\n` +
+          `Voice: founder writing to investor. Confident but not boastful. Name risks plainly — investors trust founders who do. No hype, no buzzwords, no marketing-speak.\n\n` +
+          `Pull source material from the founder's seven PMF-stage responses (provided below) and the founder-only fields (company name, one-liner, team, ask). Quote customer language verbatim when it strengthens the case. Do not invent metrics, customers, or quotes that aren't in the source material. If a section has thin evidence, write it short and honest, not padded.\n\n` +
+          `Formatting cues:\n` +
+          `- Use **bold** inline to mark sub-headers inside Key Risks (e.g. "**Competition / defensibility.** ...").\n` +
+          `- Use _italics_ sparingly for emphasis.\n` +
+          `- No bullet syntax; use flowing paragraphs separated by blank lines.\n\n` +
+          `## Sections (in order)\n${sectionsList}\n\n` +
           `Use the emit_memo tool to deliver the structured result.`,
         cache_control: { type: "ephemeral" },
       },

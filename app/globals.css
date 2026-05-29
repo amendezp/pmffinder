@@ -110,11 +110,56 @@ section {
   background: #00f0ff;
 }
 
-/* Memo — bright/white when printed so it's legible on paper */
+/* Memo — dark on screen (matches the cyber theme), white on print.
+ * All memo styling pulls from CSS variables that flip via @media print, so
+ * the same component renders correctly in both contexts.
+ */
 .memo-page {
-  background: #ffffff;
-  color: #050814;
-  border: 1px solid #00f0ff;
+  --memo-bg: #0a0f24;
+  --memo-fg: rgba(255, 255, 255, 0.92);
+  --memo-fg-muted: rgba(255, 255, 255, 0.7);
+  --memo-fg-faint: rgba(0, 240, 255, 0.55);
+  --memo-section-title: #00f0ff;
+  --memo-section-title-pending: rgba(0, 240, 255, 0.4);
+  --memo-border: rgba(0, 240, 255, 0.4);
+  --memo-border-soft: rgba(0, 240, 255, 0.18);
+  --memo-pending-text: rgba(255, 255, 255, 0.55);
+  --memo-pending-border: rgba(0, 240, 255, 0.25);
+  --memo-ready-text: #00ff88;
+  --memo-ready-border: rgba(0, 255, 136, 0.5);
+  --memo-ready-bg: rgba(0, 255, 136, 0.12);
+  --memo-draft-text: #00f0ff;
+  --memo-draft-border: rgba(0, 240, 255, 0.5);
+  --memo-draft-bg: rgba(0, 240, 255, 0.12);
+  --memo-eyebrow: rgba(0, 240, 255, 0.75);
+  --memo-header-rule: rgba(0, 240, 255, 0.3);
+
+  background: var(--memo-bg);
+  color: var(--memo-fg);
+  border: 1px solid var(--memo-border);
+}
+
+@media print {
+  .memo-page {
+    --memo-bg: #ffffff;
+    --memo-fg: #0f172a;
+    --memo-fg-muted: #475569;
+    --memo-fg-faint: #94a3b8;
+    --memo-section-title: #1e3a8a;
+    --memo-section-title-pending: #94a3b8;
+    --memo-border: #cbd5e1;
+    --memo-border-soft: #e2e8f0;
+    --memo-pending-text: #64748b;
+    --memo-pending-border: #cbd5e1;
+    --memo-ready-text: #065f46;
+    --memo-ready-border: #10b981;
+    --memo-ready-bg: #d1fae5;
+    --memo-draft-text: #155e75;
+    --memo-draft-border: #0891b2;
+    --memo-draft-bg: #cffafe;
+    --memo-eyebrow: #1e3a8a;
+    --memo-header-rule: #cbd5e1;
+  }
 }
 
 @media print {

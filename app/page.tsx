@@ -82,22 +82,24 @@ export default async function Landing() {
           )}
         </div>
 
-        {/* Slim stage strip — no blurbs */}
-        <div className="mt-20 max-w-4xl fade-in-up" style={{ animationDelay: "0.4s" }}>
-          <div className="mb-4 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/70">
+        {/* Stage strip — each stage as its own card so titles never truncate */}
+        <div className="mt-20 max-w-3xl fade-in-up" style={{ animationDelay: "0.4s" }}>
+          <div className="mb-5 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-neon-cyan/70">
             <span>The seven stages</span>
             <div className="h-px flex-1 bg-neon-cyan/20" />
           </div>
-          <ol className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-3 lg:grid-cols-4">
+          <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {stages.map((s) => (
               <li
                 key={s.stageNumber}
-                className="flex items-baseline gap-2 font-mono text-xs text-white/90"
+                className="flex items-baseline gap-3 border-l border-neon-cyan/30 bg-neon-cyan/[0.02] py-2 pl-4 transition-colors hover:border-neon-cyan/70"
               >
-                <span className="shrink-0 text-neon-cyan/85">
+                <span className="shrink-0 font-mono text-sm text-neon-cyan">
                   {`0${s.stageNumber}`.slice(-2)}
                 </span>
-                <span className="leading-snug">{s.title}</span>
+                <span className="font-mono text-sm leading-snug text-white">
+                  {s.title}
+                </span>
               </li>
             ))}
           </ol>
